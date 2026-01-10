@@ -3,73 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lemon Music</title>
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Nostalgram</title>
     <style>
-        body { font-family: 'Courier New', monospace; background: #000; color: #fff; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        body { font-family: -apple-system, sans-serif; background: #000; color: #fff; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
-        /* Твой секретный экран ошибки */
-        #err { display: none; text-align: center; }
-        .glitch { font-size: 28px; font-weight: bold; color: #ff3b30; text-transform: uppercase; animation: flash 0.5s infinite; }
-        .code { font-size: 20px; color: #444; margin-top: 10px; }
-        
-        @keyframes flash {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
-        }
+        /* Экран входа */
+        #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; position: fixed; background: #000; z-index: 10; }
+        .logo { font-size: 32px; font-weight: bold; font-style: italic; margin-bottom: 20px; letter-spacing: -1px; }
+        input { background: #121212; border: 1px solid #333; padding: 12px; border-radius: 8px; color: #fff; margin-bottom: 10px; width: 250px; text-align: center; outline: none; }
+        .login-btn { background: #0095f6; border: none; color: #fff; padding: 10px 20px; border-radius: 8px; font-weight: bold; width: 250px; }
 
-        /* Плеер */
-        #main { display: block; width: 100%; padding: 20px; box-sizing: border-box; text-align: center; }
-        input { width: 80%; background: #111; border: 1px solid #333; padding: 12px; border-radius: 8px; color: #0f0; outline: none; margin-bottom: 10px; }
-        button { background: #111; border: 1px solid #0f0; color: #0f0; padding: 10px 20px; border-radius: 8px; font-weight: bold; }
-        #vid { width: 100%; height: 250px; border-radius: 12px; border: 1px solid #333; margin-top: 20px; display: none; }
+        /* Основной контент */
+        #app { display: none; width: 100%; max-width: 500px; padding-top: 20px; }
+        .header { position: sticky; top: 0; background: rgba(0,0,0,0.9); padding: 15px; text-align: center; border-bottom: 1px solid #121212; font-size: 20px; font-weight: bold; }
+        
+        .feed { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; padding: 2px; }
+        .photo { width: 100%; aspect-ratio: 1/1; background: #121212; object-fit: cover; cursor: pointer; }
+        
+        /* Инструкция как добавлять */
+        .admin-panel { padding: 20px; font-size: 12px; color: #555; text-align: center; line-height: 1.6; }
+        code { color: #0095f6; }
     </style>
 </head>
 <body>
 
-    <div id="err">
-        <div class="glitch">ACCESS DECLINED</div>
-        <div class="code">Error Code: 9x9192</div>
+    <div id="login-screen">
+        <div class="logo">Nostalgram</div>
+        <input type="password" id="pass" placeholder="Введите код доступа">
+        <button class="login-btn" onclick="checkPass()">Войти</button>
+        <div id="wrong" style="color: red; font-size: 12px; margin-top: 10px; display: none;">Неверный код</div>
     </div>
 
-    <div id="main">
-        <h2 style="color: #0f0; letter-spacing: 2px;">LEMON_MUSIC v1.0</h2>
-        <input type="text" id="url" placeholder="Paste YouTube link here...">
-        <br>
-        <button onclick="run()">EXECUTE</button>
-        <div id="box"></div>
+    <div id="app">
+        <div class="header">nostalgram</div>
+        
+        <div class="feed">
+            <img class="photo" src="https://images.unsplash.com/photo-1554080353-a576cf803bda?w=500" alt="photo">
+            <img class="photo" src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=500" alt="photo">
+            <img class="photo" src="https://images.unsplash.com/photo-1508919801845-fc2ae1bc2a28?w=500" alt="photo">
+            </div>
+
+        <div class="admin-panel">
+            <p>Чтобы добавить фото: открой код на GitHub,<br>найди блок <code>class="feed"</code> и добавь новую строку <code>&lt;img class="photo" src="ССЫЛКА"&gt;</code></p>
+            <p>Пароль по умолчанию: <code>0000</code></p>
+        </div>
     </div>
 
 <script>
-    function check() {
-        const e = document.getElementById('err');
-        const m = document.getElementById('main');
+    function checkPass() {
+        const p = document.getElementById('pass').value;
+        const correct = "0000"; // МОЖЕШЬ ПОМЕНЯТЬ ПАРОЛЬ ТУТ
         
-        // Если инета нет — рубим доступ
-        if (!navigator.onLine) {
-            e.style.display = 'block';
-            m.style.display = 'none';
+        if(p === correct) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
         } else {
-            e.style.display = 'none';
-            m.style.display = 'block';
+            document.getElementById('wrong').style.display = 'block';
+            setTimeout(() => { document.getElementById('wrong').style.display = 'none'; }, 2000);
         }
     }
 
-    // Чекаем сеть каждые 2 секунды, чтобы не лагало
-    setInterval(check, 2000);
-    check();
-
-    function run() {
-        const val = document.getElementById('url').value;
-        if(val.includes('v=')) {
-            const id = val.split('v=')[1].split('&')[0];
-            document.getElementById('box').innerHTML = 
-                <iframe id="vid" src="https://www.youtube.com/embed/${id}?autoplay=1" allow="autoplay" style="display:block"></iframe>;
-        } else {
-            alert('SYSTEM ERROR: Invalid URL');
-        }
-    }
+    // Вход по нажатию Enter
+    document.getElementById('pass').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') { checkPass(); }
+    });
 </script>
 </body>
 </html>
