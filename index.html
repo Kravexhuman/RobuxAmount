@@ -3,30 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>School Clicker</title>
-    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/3/3a/Roblox_player_icon_black.svg">
+    <title>Lemon Clicker</title>
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1041/1041383.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
         body { font-family: -apple-system, sans-serif; background: #000; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; user-select: none; }
         .game-container { text-align: center; width: 300px; }
-        .score-display { font-size: 40px; font-weight: 800; color: #007aff; margin-bottom: 20px; }
+        .score-display { font-size: 50px; font-weight: 800; color: #007aff; margin-bottom: 20px; transition: 0.1s; }
         
-        /* Кнопка-тапалка */
         #clickBtn {
             width: 180px; height: 180px; border-radius: 50%; border: none;
             background: radial-gradient(circle, #007aff, #0056b3);
-            box-shadow: 0 0 20px rgba(0,122,255,0.5);
-            font-size: 60px; cursor: pointer; transition: 0.1s; margin-bottom: 30px;
+            box-shadow: 0 0 30px rgba(0,122,255,0.4);
+            font-size: 80px; cursor: pointer; transition: 0.1s; margin-bottom: 30px;
+            outline: none;
         }
-        #clickBtn:active { transform: scale(0.9); }
+        #clickBtn:active { transform: scale(0.9); opacity: 0.8; }
 
-        /* Магазин */
-        .shop { background: #1a1a1a; padding: 15px; border-radius: 20px; border: 1px solid #333; }
-        .shop-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 14px; }
-        .buy-btn { background: #28a745; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; }
-        .buy-btn:disabled { background: #444; }
-
-        .status { font-size: 12px; color: #888; margin-top: 10px; }
+        .shop { background: #1a1a1a; padding: 20px; border-radius: 24px; border: 1px solid #333; }
+        .shop-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .buy-btn { background: #28a745; color: white; border: none; padding: 8px 12px; border-radius: 10px; font-weight: bold; }
+        .buy-btn:disabled { background: #333; color: #666; }
+        #timer { font-size: 12px; color: #555; margin-top: 10px; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -38,70 +36,64 @@
 
     <div class="shop">
         <div class="shop-item">
-            <span>Auto-Click (2 min)</span>
+            <span>Auto-Click (2m)</span>
             <button class="buy-btn" id="auto1" onclick="buyAuto(100, 120)">100 🍋</button>
         </div>
         <div class="shop-item">
-            <span>Super Click (5 min)</span>
+            <span>Super (5m)</span>
             <button class="buy-btn" id="auto2" onclick="buyAuto(500, 300)">500 🍋</button>
         </div>
-        <div class="shop-item">
-            <span>Gold Skin</span>
-            <button class="buy-btn" onclick="changeSkin('🌕', 1000)">1000 🍋</button>
-        </div>
     </div>
-    <div class="status" id="timer">No active boosters</div>
+    <div id="timer">No boosters active</div>
 </div>
 
 <script>
     let clicks = 0;
-    let autoInterval = null;
-    let timeLeft = 0;
+    let timerInterval = null;
 
+    // Главная функция клика
     function doClick() {
-        clicks++;
-        updateUI();
+        clicks = clicks + 1;
+        updateDisplay();
     }
 
-    function updateUI() {
-        document.getElementById('score').innerText = clicks;
-        // Проверка кнопок в магазе
+    // Обновление цифр на экране
+    function updateDisplay() {
+        const scoreElement = document.getElementById('score');
+        scoreElement.innerText = clicks;
+        
+        // Делаем цифры чуть больше при клике для эффекта
+        scoreElement.style.transform = "scale(1.1)";
+        setTimeout(() => { scoreElement.style.transform = "scale(1)"; }, 50);
+
+        // Включаем/выключаем кнопки в магазине
         document.getElementById('auto1').disabled = clicks < 100;
         document.getElementById('auto2').disabled = clicks < 500;
     }
 
-    function buyAuto(cost, duration) {
-        if (clicks >= cost) {
-            clicks -= cost;
-            timeLeft = duration;
-            startAuto();
-            updateUI();
+    function buyAuto(price, seconds) {
+        if (clicks >= price) {
+            clicks -= price;
+            updateDisplay();
+            startBooster(seconds);
         }
     }
 
-    function startAuto() {
-        if (autoInterval) clearInterval(autoInterval);
-        
-        autoInterval = setInterval(() => {
+    function startBooster(duration) {
+        let timeLeft = duration;
+        if (timerInterval) clearInterval(timerInterval);
+
+        timerInterval = setInterval(() => {
             if (timeLeft > 0) {
-                clicks += 2; // Автокликер дает по 2 лимона
+                clicks += 2; // Дает по 2 лимона в секунду
                 timeLeft--;
-                document.getElementById('timer').innerText = Auto-clicking: ${timeLeft}s left;
-                updateUI();
+                document.getElementById('timer').innerText = "BOOST: " + timeLeft + "s";
+                updateDisplay();
             } else {
-                clearInterval(autoInterval);
+                clearInterval(timerInterval);
                 document.getElementById('timer').innerText = "Booster ended";
             }
         }, 1000);
-    }
-
-    function changeSkin(emoji, cost) {
-        if (clicks >= cost) {
-            clicks -= cost;
-            document.getElementById('clickBtn').innerText = emoji;
-            if (emoji === '🌕') document.getElementById('clickBtn').style.background = "radial-gradient(circle, #ffcc00, #b8860b)";
-            updateUI();
-        }
     }
 </script>
 
