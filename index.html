@@ -6,74 +6,70 @@
     <title>Lemon Music</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
-        body { font-family: -apple-system, sans-serif; background: #000; color: #fff; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        body { font-family: 'Courier New', monospace; background: #000; color: #fff; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
         
-        /* Экран ошибки */
-        #error-screen { display: none; color: #ff3b30; }
-        #error-screen h1 { font-size: 24px; margin-bottom: 10px; }
-        #error-screen p { font-family: monospace; font-size: 18px; color: #555; }
+        /* Твой секретный экран ошибки */
+        #err { display: none; text-align: center; }
+        .glitch { font-size: 28px; font-weight: bold; color: #ff3b30; text-transform: uppercase; animation: flash 0.5s infinite; }
+        .code { font-size: 20px; color: #444; margin-top: 10px; }
+        
+        @keyframes flash {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
 
-        /* Основной контент (плеер) */
-        #app-content { display: none; width: 100%; padding: 20px; box-sizing: border-box; }
-        .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
-        input { flex: 1; background: #1c1c1e; border: none; padding: 12px; border-radius: 10px; color: #fff; outline: none; }
-        button { background: #007aff; border: none; color: #fff; padding: 10px 20px; border-radius: 10px; font-weight: bold; }
-        iframe { width: 100%; height: 250px; border-radius: 15px; border: none; margin-top: 20px; display: none; }
+        /* Плеер */
+        #main { display: block; width: 100%; padding: 20px; box-sizing: border-box; text-align: center; }
+        input { width: 80%; background: #111; border: 1px solid #333; padding: 12px; border-radius: 8px; color: #0f0; outline: none; margin-bottom: 10px; }
+        button { background: #111; border: 1px solid #0f0; color: #0f0; padding: 10px 20px; border-radius: 8px; font-weight: bold; }
+        #vid { width: 100%; height: 250px; border-radius: 12px; border: 1px solid #333; margin-top: 20px; display: none; }
     </style>
 </head>
 <body>
 
-    <div id="error-screen">
-        <h1>ACCESS DECLINED</h1>
-        <p>Code: 9x9192</p>
-        <div style="font-size: 10px; color: #222; margin-top: 20px;">System failure: Connection lost</div>
+    <div id="err">
+        <div class="glitch">ACCESS DECLINED</div>
+        <div class="code">Error Code: 9x9192</div>
     </div>
 
-    <div id="app-content">
-        <h2 style="margin: 0;">Lemon Music</h2>
-        <p style="color: #8e8e93; font-size: 12px; margin-bottom: 20px;">Secure Connection Established</p>
-
-        <div class="search-box">
-            <input type="text" id="url" placeholder="Вставь ссылку на YT видео...">
-            <button onclick="play()">Play</button>
-        </div>
-        <div id="player"></div>
+    <div id="main">
+        <h2 style="color: #0f0; letter-spacing: 2px;">LEMON_MUSIC v1.0</h2>
+        <input type="text" id="url" placeholder="Paste YouTube link here...">
+        <br>
+        <button onclick="run()">EXECUTE</button>
+        <div id="box"></div>
     </div>
 
 <script>
-    function checkConnection() {
-        const error = document.getElementById('error-screen');
-        const content = document.getElementById('app-content');
-
-        if (navigator.onLine) {
-            // Интернет есть
-            error.style.display = 'none';
-            content.style.display = 'block';
+    function check() {
+        const e = document.getElementById('err');
+        const m = document.getElementById('main');
+        
+        // Если инета нет — рубим доступ
+        if (!navigator.onLine) {
+            e.style.display = 'block';
+            m.style.display = 'none';
         } else {
-            // Интернета нет
-            error.style.display = 'block';
-            content.style.display = 'none';
+            e.style.display = 'none';
+            m.style.display = 'block';
         }
     }
 
-    // Слушаем изменения сети
-    window.addEventListener('online', checkConnection);
-    window.addEventListener('offline', checkConnection);
-    
-    // Проверка при загрузке
-    checkConnection();
+    // Чекаем сеть каждые 2 секунды, чтобы не лагало
+    setInterval(check, 2000);
+    check();
 
-    function play() {
-        const url = document.getElementById('url').value;
-        if(url.includes('v=')) {
-            const id = url.split('v=')[1].split('&')[0];
-            document.getElementById('player').innerHTML = 
-                <iframe src="https://www.youtube.com/embed/${id}?autoplay=1" allow="autoplay" style="display:block"></iframe>;
+    function run() {
+        const val = document.getElementById('url').value;
+        if(val.includes('v=')) {
+            const id = val.split('v=')[1].split('&')[0];
+            document.getElementById('box').innerHTML = 
+                <iframe id="vid" src="https://www.youtube.com/embed/${id}?autoplay=1" allow="autoplay" style="display:block"></iframe>;
         } else {
-            alert('Бро, вставь нормальную ссылку!');
+            alert('SYSTEM ERROR: Invalid URL');
         }
     }
 </script>
-
 </body>
 </html>
