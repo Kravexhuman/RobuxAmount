@@ -1,87 +1,136 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roblox Tracker</title>
-    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/c/c7/Robux_2019.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Robux Tracker</title>
+    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Roblox_player_icon_black.svg/1024px-Roblox_player_icon_black.svg.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
-        body { background: #1a1a1a; color: white; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .card { background: #2a2a2a; width: 85%; max-width: 350px; padding: 25px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.7); text-align: center; border: 1px solid #3d3d3d; }
-        
-        /* Круглая аватарка */
-        #avatar-display { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #f7b132; margin-bottom: 10px; background: #3d3d3d; }
-        
-        h2 { margin: 5px 0; font-size: 22px; color: #ffffff; }
-        .robux-count { color: #f7b132; font-size: 45px; font-weight: bold; margin: 10px 0; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .robux-count img { width: 40px; }
-        
-        .inputs { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-        input { background: #3d3d3d; border: none; padding: 12px; border-radius: 12px; color: white; outline: none; font-size: 14px; }
-        button { background: #f7b132; border: none; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:active { transform: scale(0.95); opacity: 0.8; }
-        
-        /* Скрываем стандартную кнопку выбора файла, сделаем свою */
-        #file-label { font-size: 12px; color: #aaa; cursor: pointer; text-decoration: underline; }
-        #file-input { display: none; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .card {
+            background: #1e1e1e;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 300px;
+            text-align: center;
+            border: 1px solid #333;
+            animation: fadeIn 0.8s ease-out; /* Анимация появления */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .roblox-logo {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            animation: spin 4s linear infinite; /* Лого крутится потихоньку */
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        h2 { margin: 0; font-size: 22px; color: #fff; }
+
+        .balance {
+            font-size: 48px;
+            font-weight: bold;
+            color: #007aff; /* Синий цвет */
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(0,122,255,0.3);
+        }
+
+        .btn {
+            background-color: #007aff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: all 0.3s ease; /* Плавная анимация кнопки */
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+            background-color: #0056b3;
+        }
+
+        .footer-text {
+            font-size: 10px;
+            color: #666;
+            margin-top: 25px;
+            line-height: 1.4;
+        }
+
+        input {
+            background: #2c2c2c;
+            border: 1px solid #444;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            width: calc(100% - 22px);
+            margin-bottom: 10px;
+            outline: none;
+        }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <img id="avatar-display" src="https://tr.rbxcdn.com/38c6ed3c3167b667e5a022567438e12d/420/420/Hat/Png" alt="Avatar">
-        <h2 id="nickname-display">Your Nickname</h2>
-        
-        <div class="robux-count">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Robux_2019.png" alt="R$">
-            <span id="balance">0</span>
-        </div>
-
-        <div class="inputs">
-            <input type="text" id="nick-input" placeholder="Введите ник...">
-            <input type="number" id="robux-input" placeholder="Сколько робуксов?">
-            
-            <label for="file-input" id="file-label">Сменить аватарку</label>
-            <input type="file" id="file-input" accept="image/*">
-            
-            <button onclick="saveAll()">СОХРАНИТЬ</button>
-        </div>
+<div class="card">
+    <div class="header">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Roblox_player_icon_black.svg/1024px-Roblox_player_icon_black.svg.png" class="roblox-logo" alt="R">
+        <h2>My Robux</h2>
     </div>
 
-    <script>
-        // Функция сохранения данных
-        function saveAll() {
-            const nick = document.getElementById('nick-input').value;
-            const robux = document.getElementById('robux-input').value;
-            
-            if(nick) {
-                document.getElementById('nickname-display').innerText = nick;
-                localStorage.setItem('rbx_nick', nick);
-            }
-            if(robux) {
-                document.getElementById('balance').innerText = robux;
-                localStorage.setItem('rbx_amount', robux);
-            }
-            alert("Данные обновлены, бро!");
-        }
+    <div class="balance" id="robuxCount">0</div>
+    
+    <input type="text" id="nickInput" placeholder="Enter nickname...">
+    <button class="btn" onclick="updateRobux()">Update Balance</button>
 
-        // Работа с аватаркой (выбор из галереи)
-        document.getElementById('file-input').addEventListener('change', function(e) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                const dataURL = reader.result;
-                document.getElementById('avatar-display').src = dataURL;
-                localStorage.setItem('rbx_avatar', dataURL); // Сохраняем саму фотку в память!
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        });
+    <div class="footer-text">
+        This is a third-party application and is not affiliated with, authorized, maintained, sponsored, or endorsed by Roblox Corporation or any of its affiliates.
+    </div>
+</div>
 
-        // Загрузка данных при старте
-        window.onload = function() {
-            if(localStorage.getItem('rbx_nick')) document.getElementById('nickname-display').innerText = localStorage.getItem('rbx_nick');
-            if(localStorage.getItem('rbx_amount')) document.getElementById('balance').innerText = localStorage.getItem('rbx_amount');
-            if(localStorage.getItem('rbx_avatar')) document.getElementById('avatar-display').src = localStorage.getItem('rbx_avatar');
-        };
-    </script>
+<script>
+    function updateRobux() {
+        const count = document.getElementById('robuxCount');
+        // Эффект подпрыгивания цифр
+        count.style.transform = "scale(1.2)";
+        setTimeout(() => {
+            count.innerText = Math.floor(Math.random() * 100000);
+            count.style.transform = "scale(1)";
+        }, 150);
+    }
+</script>
+
 </body>
 </html>
