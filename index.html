@@ -3,74 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lemon Clicker: Galactic</title>
+    <title>Lemon Clicker Pro</title>
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1041/1041383.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
-        body { font-family: -apple-system, sans-serif; background: #000; color: #fff; margin: 0; padding: 0; overflow: hidden; user-select: none; }
-        .page { display: none; height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 80px; box-sizing: border-box; }
-        .active-page { display: flex; }
-
-        /* Игра */
-        #score { font-size: 60px; font-weight: 900; color: #007aff; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0,122,255,0.3); }
-        #tapArea { 
-            width: 230px; height: 230px; border-radius: 50%; 
-            background: radial-gradient(circle, #007aff, #001122); 
-            display: flex; align-items: center; justify-content: center;
-            font-size: 90px; box-shadow: 0 0 40px rgba(0,122,255,0.4);
-            transition: transform 0.05s;
-        }
-        #tapArea:active { transform: scale(0.9); }
-
-        /* Магазин */
-        .shop-container { width: 90%; max-width: 360px; height: 70vh; overflow-y: auto; padding-right: 5px; }
-        .shop-section { margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 10px; }
-        .shop-item { 
-            background: #111; padding: 12px; border-radius: 18px; 
-            margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid #333;
-        }
-        .item-info b { display: block; font-size: 14px; }
-        .item-info small { color: #777; font-size: 11px; }
-        .buy-btn { background: #007aff; border: none; color: #fff; padding: 8px 14px; border-radius: 10px; font-weight: bold; min-width: 80px; }
-        .buy-btn:disabled { background: #222; color: #444; }
-
-        /* Навигация */
-        .nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: #050505; display: flex; border-top: 1px solid #222; }
-        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: #444; }
-        .nav-btn.active-nav { color: #007aff; }
-        .nav-icon { font-size: 22px; }
-
-        #status { font-size: 12px; color: #00ff00; height: 15px; margin-top: 10px; }
+        body { font-family: -apple-system, sans-serif; background: #000; color: #fff; margin: 0; overflow: hidden; user-select: none; }
+        .p { display: none; height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 80px; box-sizing: border-box; }
+        .act { display: flex; }
+        #sc { font-size: 60px; font-weight: 900; color: #007aff; margin-bottom: 10px; }
+        #tap { width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, #007aff, #001122); display: flex; align-items: center; justify-content: center; font-size: 100px; box-shadow: 0 0 40px rgba(0,122,255,0.4); transition: 0.05s; }
+        #tap:active { transform: scale(0.9); }
+        .s-con { width: 90%; max-width: 360px; height: 70vh; overflow-y: auto; }
+        .it { background: #111; padding: 12px; border-radius: 18px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; }
+        .btn { background: #007aff; border: none; color: #fff; padding: 10px; border-radius: 10px; font-weight: bold; min-width: 70px; }
+        .btn:disabled { background: #222; color: #444; }
+        .nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: #080808; display: flex; border-top: 1px solid #222; }
+        .n-bt { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; color: #444; }
+        .n-act { color: #007aff; }
+        #st { font-size: 14px; color: #00ff00; margin-top: 10px; min-height: 20px; }
     </style>
 </head>
 <body>
-
-    <div id="gamePage" class="page active-page">
-        <div id="score">0</div>
-        <div id="tapArea" ontouchstart="handleTap()">🍋</div>
-        <div id="status"></div>
+<div id="pg1" class="p act">
+    <div id="sc">0</div>
+    <div id="tap" ontouchstart="doT()">🍋</div>
+    <div id="st"></div>
+</div>
+<div id="pg2" class="p">
+    <h2 style="color:#007aff">Shop</h2>
+    <div class="s-con">
+        <div class="it"><div><b>⚡ Auto</b><br><small>+2/s</small></div><button class="btn" id="m1" onclick="up(100,120,2)">100</button></div>
+        <div class="it"><div><b>🚀 Super</b><br><small>+15/s</small></div><button class="btn" id="m2" onclick="up(500,300,15)">500</button></div>
+        <div class="it"><div><b>🌌 Hyper</b><br><small>+60/s</small></div><button class="btn" id="m3" onclick="up(2500,600,60)">2.5k</button></div>
+        <div class="it"><div><b>🪐 Ultra</b><br><small>+200/s</small></div><button class="btn" id="m4" onclick="up(10000,900,200)">10k</button></div>
+        <div class="it"><div><b>💎 Skin</b></div><button class="btn" id="s1" onclick="sk('💎',1500,'#00f2ff')">1.5k</button></div>
+        <div class="it"><div><b>🔥 Skin</b></div><button class="btn" id="s2" onclick="sk('🔥',5000,'#f40')">5k</button></div>
+        <div class="it"><div><b>👑 Skin</b></div><button class="btn" id="s3" onclick="sk('👑',25000,'#fd0')">25k</button></div>
+        <div class="it"><div><b>🌀 Void</b></div><button class="btn" id="s4" onclick="sk('🌀',100000,'#82e')">100k</button></div>
     </div>
-
-    <div id="shopPage" class="page">
-        <h2 style="color:#007aff; margin-bottom:15px;">Galactic Shop</h2>
-        <div class="shop-container">
-            <div class="shop-section">
-                <p style="font-size:12px; color:#555">BOOSTS</p>
-                <div class="shop-item">
-                    <div class="item-info"><b>⚡ Auto-Tap</b><small>+2/sec (2m)</small></div>
-                    <button class="buy-btn" id="b1" onclick="buyB(100, 120, 2)">100</button>
-                </div>
-                <div class="shop-item">
-                    <div class="item-info"><b>🚀 Super-Tap</b><small>+15/sec (5m)</small></div>
-                    <button class="buy-btn" id="b2" onclick="buyB(500, 300, 15)">500</button>
-                </div>
-                <div class="shop-item">
-                    <div class="item-info"><b>🌌 Hyper-Farm</b><small>+50/sec (10m)</small></div>
-                    <button class="buy-btn" id="b3" onclick="buyB(2000, 600, 50)">2k</button>
-                </div>
-            </div>
-            <div class="shop-section">
-                <p style="font-size:12px; color:#555">SKINS</p>
-                <div class="shop-item">
-                    <div class="item-info"><b>💎 Diamond</b><small>Cyan glow</small></div>
+</div>
+<div class="nav">
+    <div class="n-bt n-act" id="v1" onclick="sw('g')">🎮<br>Tap</div>
+    <div class="n-bt" id="v2" onclick="sw('s')">🛒<br>Shop</div>
+</div>
+<script>
+    let c=0, t=null;
+    function doT(){ c++; res(); }
+    function sw(p){
+        document.getElementById('pg1').className = 'p'+(p=='g'?' act':'');
+        document.getElementById('pg2').className = 'p'+(p=='s'?' act':'');
+        document.getElementById('v1').className = 'n-bt'+(p=='g'?' n-act':'');
+        document.getElementById('v2').className = 'n-bt'+(p=='s'?' n-act':'');
+    }
+    function res(){
+        document.getElementById('sc').innerText = c;
+        document.getElementById('m1').disabled = c<100;
+        document.getElementById('m2').disabled = c<500;
+        document.
