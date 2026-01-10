@@ -3,132 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Robux Tracker</title>
-    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Roblox_player_icon_black.svg/1024px-Roblox_player_icon_black.svg.png">
+    <title>School Clicker</title>
+    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/3/3a/Roblox_player_icon_black.svg">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #121212;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
+        body { font-family: -apple-system, sans-serif; background: #000; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; user-select: none; }
+        .game-container { text-align: center; width: 300px; }
+        .score-display { font-size: 40px; font-weight: 800; color: #007aff; margin-bottom: 20px; }
+        
+        /* Кнопка-тапалка */
+        #clickBtn {
+            width: 180px; height: 180px; border-radius: 50%; border: none;
+            background: radial-gradient(circle, #007aff, #0056b3);
+            box-shadow: 0 0 20px rgba(0,122,255,0.5);
+            font-size: 60px; cursor: pointer; transition: 0.1s; margin-bottom: 30px;
         }
+        #clickBtn:active { transform: scale(0.9); }
 
-        .card {
-            background: #1e1e1e;
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            width: 300px;
-            text-align: center;
-            border: 1px solid #333;
-            animation: fadeIn 0.8s ease-out; /* Анимация появления */
-        }
+        /* Магазин */
+        .shop { background: #1a1a1a; padding: 15px; border-radius: 20px; border: 1px solid #333; }
+        .shop-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 14px; }
+        .buy-btn { background: #28a745; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; }
+        .buy-btn:disabled { background: #444; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .roblox-logo {
-            width: 40px;
-            height: 40px;
-            margin-right: 15px;
-            animation: spin 4s linear infinite; /* Лого крутится потихоньку */
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        h2 { margin: 0; font-size: 22px; color: #fff; }
-
-        .balance {
-            font-size: 48px;
-            font-weight: bold;
-            color: #007aff; /* Синий цвет */
-            margin: 10px 0;
-            text-shadow: 0 0 10px rgba(0,122,255,0.3);
-        }
-
-        .btn {
-            background-color: #007aff;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 15px;
-            transition: all 0.3s ease; /* Плавная анимация кнопки */
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-            background-color: #0056b3;
-        }
-
-        .footer-text {
-            font-size: 10px;
-            color: #666;
-            margin-top: 25px;
-            line-height: 1.4;
-        }
-
-        input {
-            background: #2c2c2c;
-            border: 1px solid #444;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            width: calc(100% - 22px);
-            margin-bottom: 10px;
-            outline: none;
-        }
+        .status { font-size: 12px; color: #888; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div class="header">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Roblox_player_icon_black.svg/1024px-Roblox_player_icon_black.svg.png" class="roblox-logo" alt="R">
-        <h2>My Robux</h2>
-    </div>
-
-    <div class="balance" id="robuxCount">0</div>
+<div class="game-container">
+    <div class="score-display" id="score">0</div>
     
-    <input type="text" id="nickInput" placeholder="Enter nickname...">
-    <button class="btn" onclick="updateRobux()">Update Balance</button>
+    <button id="clickBtn" onclick="doClick()">🍋</button>
 
-    <div class="footer-text">
-        This is a third-party application and is not affiliated with, authorized, maintained, sponsored, or endorsed by Roblox Corporation or any of its affiliates.
+    <div class="shop">
+        <div class="shop-item">
+            <span>Auto-Click (2 min)</span>
+            <button class="buy-btn" id="auto1" onclick="buyAuto(100, 120)">100 🍋</button>
+        </div>
+        <div class="shop-item">
+            <span>Super Click (5 min)</span>
+            <button class="buy-btn" id="auto2" onclick="buyAuto(500, 300)">500 🍋</button>
+        </div>
+        <div class="shop-item">
+            <span>Gold Skin</span>
+            <button class="buy-btn" onclick="changeSkin('🌕', 1000)">1000 🍋</button>
+        </div>
     </div>
+    <div class="status" id="timer">No active boosters</div>
 </div>
 
 <script>
-    function updateRobux() {
-        const count = document.getElementById('robuxCount');
-        // Эффект подпрыгивания цифр
-        count.style.transform = "scale(1.2)";
-        setTimeout(() => {
-            count.innerText = Math.floor(Math.random() * 100000);
-            count.style.transform = "scale(1)";
-        }, 150);
+    let clicks = 0;
+    let autoInterval = null;
+    let timeLeft = 0;
+
+    function doClick() {
+        clicks++;
+        updateUI();
+    }
+
+    function updateUI() {
+        document.getElementById('score').innerText = clicks;
+        // Проверка кнопок в магазе
+        document.getElementById('auto1').disabled = clicks < 100;
+        document.getElementById('auto2').disabled = clicks < 500;
+    }
+
+    function buyAuto(cost, duration) {
+        if (clicks >= cost) {
+            clicks -= cost;
+            timeLeft = duration;
+            startAuto();
+            updateUI();
+        }
+    }
+
+    function startAuto() {
+        if (autoInterval) clearInterval(autoInterval);
+        
+        autoInterval = setInterval(() => {
+            if (timeLeft > 0) {
+                clicks += 2; // Автокликер дает по 2 лимона
+                timeLeft--;
+                document.getElementById('timer').innerText = Auto-clicking: ${timeLeft}s left;
+                updateUI();
+            } else {
+                clearInterval(autoInterval);
+                document.getElementById('timer').innerText = "Booster ended";
+            }
+        }, 1000);
+    }
+
+    function changeSkin(emoji, cost) {
+        if (clicks >= cost) {
+            clicks -= cost;
+            document.getElementById('clickBtn').innerText = emoji;
+            if (emoji === '🌕') document.getElementById('clickBtn').style.background = "radial-gradient(circle, #ffcc00, #b8860b)";
+            updateUI();
+        }
     }
 </script>
 
