@@ -1,62 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lemon Clicker Pro</title>
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1041/1041383.png">
+    <title>Lemon Music</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
-        body { font-family: -apple-system, sans-serif; background: #000; color: #fff; margin: 0; overflow: hidden; user-select: none; }
-        .p { display: none; height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 80px; box-sizing: border-box; }
-        .act { display: flex; }
-        #sc { font-size: 60px; font-weight: 900; color: #007aff; margin-bottom: 10px; }
-        #tap { width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, #007aff, #001122); display: flex; align-items: center; justify-content: center; font-size: 100px; box-shadow: 0 0 40px rgba(0,122,255,0.4); transition: 0.05s; }
-        #tap:active { transform: scale(0.9); }
-        .s-con { width: 90%; max-width: 360px; height: 70vh; overflow-y: auto; }
-        .it { background: #111; padding: 12px; border-radius: 18px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; }
-        .btn { background: #007aff; border: none; color: #fff; padding: 10px; border-radius: 10px; font-weight: bold; min-width: 70px; }
-        .btn:disabled { background: #222; color: #444; }
-        .nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: #080808; display: flex; border-top: 1px solid #222; }
-        .n-bt { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; color: #444; }
-        .n-act { color: #007aff; }
-        #st { font-size: 14px; color: #00ff00; margin-top: 10px; min-height: 20px; }
+        body { font-family: -apple-system, sans-serif; background: #000; color: #fff; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        
+        /* Экран ошибки */
+        #error-screen { display: none; color: #ff3b30; }
+        #error-screen h1 { font-size: 24px; margin-bottom: 10px; }
+        #error-screen p { font-family: monospace; font-size: 18px; color: #555; }
+
+        /* Основной контент (плеер) */
+        #app-content { display: none; width: 100%; padding: 20px; box-sizing: border-box; }
+        .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { flex: 1; background: #1c1c1e; border: none; padding: 12px; border-radius: 10px; color: #fff; outline: none; }
+        button { background: #007aff; border: none; color: #fff; padding: 10px 20px; border-radius: 10px; font-weight: bold; }
+        iframe { width: 100%; height: 250px; border-radius: 15px; border: none; margin-top: 20px; display: none; }
     </style>
 </head>
 <body>
-<div id="pg1" class="p act">
-    <div id="sc">0</div>
-    <div id="tap" ontouchstart="doT()">🍋</div>
-    <div id="st"></div>
-</div>
-<div id="pg2" class="p">
-    <h2 style="color:#007aff">Shop</h2>
-    <div class="s-con">
-        <div class="it"><div><b>⚡ Auto</b><br><small>+2/s</small></div><button class="btn" id="m1" onclick="up(100,120,2)">100</button></div>
-        <div class="it"><div><b>🚀 Super</b><br><small>+15/s</small></div><button class="btn" id="m2" onclick="up(500,300,15)">500</button></div>
-        <div class="it"><div><b>🌌 Hyper</b><br><small>+60/s</small></div><button class="btn" id="m3" onclick="up(2500,600,60)">2.5k</button></div>
-        <div class="it"><div><b>🪐 Ultra</b><br><small>+200/s</small></div><button class="btn" id="m4" onclick="up(10000,900,200)">10k</button></div>
-        <div class="it"><div><b>💎 Skin</b></div><button class="btn" id="s1" onclick="sk('💎',1500,'#00f2ff')">1.5k</button></div>
-        <div class="it"><div><b>🔥 Skin</b></div><button class="btn" id="s2" onclick="sk('🔥',5000,'#f40')">5k</button></div>
-        <div class="it"><div><b>👑 Skin</b></div><button class="btn" id="s3" onclick="sk('👑',25000,'#fd0')">25k</button></div>
-        <div class="it"><div><b>🌀 Void</b></div><button class="btn" id="s4" onclick="sk('🌀',100000,'#82e')">100k</button></div>
+
+    <div id="error-screen">
+        <h1>ACCESS DECLINED</h1>
+        <p>Code: 9x9192</p>
+        <div style="font-size: 10px; color: #222; margin-top: 20px;">System failure: Connection lost</div>
     </div>
-</div>
-<div class="nav">
-    <div class="n-bt n-act" id="v1" onclick="sw('g')">🎮<br>Tap</div>
-    <div class="n-bt" id="v2" onclick="sw('s')">🛒<br>Shop</div>
-</div>
+
+    <div id="app-content">
+        <h2 style="margin: 0;">Lemon Music</h2>
+        <p style="color: #8e8e93; font-size: 12px; margin-bottom: 20px;">Secure Connection Established</p>
+
+        <div class="search-box">
+            <input type="text" id="url" placeholder="Вставь ссылку на YT видео...">
+            <button onclick="play()">Play</button>
+        </div>
+        <div id="player"></div>
+    </div>
+
 <script>
-    let c=0, t=null;
-    function doT(){ c++; res(); }
-    function sw(p){
-        document.getElementById('pg1').className = 'p'+(p=='g'?' act':'');
-        document.getElementById('pg2').className = 'p'+(p=='s'?' act':'');
-        document.getElementById('v1').className = 'n-bt'+(p=='g'?' n-act':'');
-        document.getElementById('v2').className = 'n-bt'+(p=='s'?' n-act':'');
+    function checkConnection() {
+        const error = document.getElementById('error-screen');
+        const content = document.getElementById('app-content');
+
+        if (navigator.onLine) {
+            // Интернет есть
+            error.style.display = 'none';
+            content.style.display = 'block';
+        } else {
+            // Интернета нет
+            error.style.display = 'block';
+            content.style.display = 'none';
+        }
     }
-    function res(){
-        document.getElementById('sc').innerText = c;
-        document.getElementById('m1').disabled = c<100;
-        document.getElementById('m2').disabled = c<500;
-        document.
+
+    // Слушаем изменения сети
+    window.addEventListener('online', checkConnection);
+    window.addEventListener('offline', checkConnection);
+    
+    // Проверка при загрузке
+    checkConnection();
+
+    function play() {
+        const url = document.getElementById('url').value;
+        if(url.includes('v=')) {
+            const id = url.split('v=')[1].split('&')[0];
+            document.getElementById('player').innerHTML = 
+                <iframe src="https://www.youtube.com/embed/${id}?autoplay=1" allow="autoplay" style="display:block"></iframe>;
+        } else {
+            alert('Бро, вставь нормальную ссылку!');
+        }
+    }
+</script>
+
+</body>
+</html>
