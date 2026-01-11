@@ -1,75 +1,254 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Xcoen Internet</title>
-    <link rel="icon" type="image/png" href="https://img.icons8.com/flat-round/512/letter-x.png">
-    <link rel="apple-touch-icon" href="https://img.icons8.com/flat-round/512/letter-x.png">
     
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Xcoen">
+    
+    <link rel="apple-touch-icon" href="https://img.icons8.com/flat-round/512/letter-x.png">
+
     <style>
-        body { background: #121212; color: #fff; font-family: sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; }
-        .app { width: 100%; max-width: 400px; min-height: 100vh; background: #121212; border: 1px solid #333; display: flex; flex-direction: column; }
-        
-        /* Золотой градиент для текста и кнопок */
-        .gold-text { background: linear-gradient(135deg, #D4AF37, #F1D382, #B8860B); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold; }
-        .gold-bg { background: linear-gradient(135deg, #D4AF37, #F1D382, #B8860B); color: #000; }
+        :root {
+            --gold: linear-gradient(135deg, #D4AF37 0%, #F1D382 50%, #B8860B 100%);
+            --bg: #0a0a0a;
+            --card: #1c1c1e;
+            --gold-solid: #D4AF37;
+        }
 
-        header { padding: 40px 20px 20px; text-align: center; border-bottom: 1px solid #222; }
-        .logo { font-size: 24px; letter-spacing: 5px; }
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-        .balance-box { margin: 20px; padding: 30px; background: #1c1c1c; border-radius: 20px; text-align: center; border: 1px solid rgba(212,175,55,0.2); }
-        .balance-val { font-size: 40px; margin: 10px 0; }
+        .app-container {
+            width: 100%;
+            max-width: 414px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
 
-        .tabs { display: flex; padding: 0 20px; gap: 10px; }
-        .tab { flex: 1; padding: 12px; text-align: center; background: #222; border-radius: 10px; cursor: pointer; color: #888; }
-        .tab.active { background: #333; color: #fff; border: 1px solid #444; }
+        /* Сканер лазерный */
+        .laser-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gold);
+            box-shadow: 0 0 20px var(--gold-solid);
+            z-index: 1000;
+            display: none;
+        }
 
-        .plans { padding: 20px; flex: 1; }
-        .plan { background: #1c1c1c; border-radius: 15px; padding: 20px; margin-bottom: 15px; border-left: 4px solid #D4AF37; }
-        .plan-name { font-size: 18px; margin-bottom: 5px; }
-        .plan-price { font-size: 14px; color: #888; margin-bottom: 15px; }
+        @keyframes scanning {
+            0% { top: 0; }
+            50% { top: 100%; }
+            100% { top: 0; }
+        }
 
-        .btn { border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
-        
-        footer { padding: 20px; text-align: center; font-size: 12px; color: #444; letter-spacing: 2px; }
+        header {
+            padding: 60px 20px 20px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 8px;
+            background: var(--gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .tab-nav {
+            display: flex;
+            padding: 0 20px;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 16px;
+            background: #1c1c1e;
+            color: #666;
+            text-align: center;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: #fff;
+            background: #2c2c2e;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 0 20px;
+            overflow-y: auto;
+        }
+
+        .view { display: none; animation: fadeIn 0.4s ease; }
+        .view.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .balance-box {
+            background: linear-gradient(145deg, #1e1e1e, #121212);
+            border-radius: 28px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .amount {
+            font-size: 48px;
+            font-weight: 800;
+            background: var(--gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 15px 0;
+        }
+
+        .premium-card {
+            background: var(--card);
+            border-radius: 22px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--gold-solid);
+        }
+
+        .gold-button {
+            background: var(--gold);
+            color: #000;
+            border: none;
+            padding: 16px;
+            width: 100%;
+            border-radius: 16px;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+        .flash-screen {
+            position: absolute;
+            inset: 0;
+            background: var(--gold-solid);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1001;
+        }
+
+        @keyframes flashAnim {
+            0% { opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { opacity: 0; }
+        }
+
+        footer {
+            padding: 40px;
+            text-align: center;
+            font-size: 10px;
+            color: #333;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
 
-<div class="app">
+<div class="app-container" id="app">
+    <div id="laser" class="laser-line"></div>
+    <div id="flash" class="flash-screen"></div>
+
     <header>
-        <div class="logo gold-text">XCOEN</div>
+        <div class="logo">XCOEN</div>
     </header>
 
-    <div class="tabs">
-        <div class="tab active">OVERVIEW</div>
-        <div class="tab">SERVICES</div>
+    <div class="tab-nav">
+        <div class="tab-btn active" onclick="showTab(this, 'overview')">OVERVIEW</div>
+        <div class="tab-btn" onclick="showTab(this, 'services')">SERVICES</div>
     </div>
 
-    <div class="balance-box">
-        <div style="font-size: 12px; color: #666; letter-spacing: 1px;">AVAILABLE BALANCE</div>
-        <div class="balance-val gold-text">150 000 ₸</div>
-    </div>
-
-    <div class="plans">
-        <div class="plan">
-            <div class="plan-name">Base Elite</div>
-            <div class="plan-price">7.842 ₸ / month</div>
-            <button class="btn gold-bg" onclick="alert('Confirmed')">Upgrade</button>
+    <div class="content-area">
+        <div id="overview" class="view active">
+            <div class="balance-box">
+                <div style="font-size: 11px; color: #555; letter-spacing: 2px;">AVAILABLE CAPITAL</div>
+                <div class="amount">150 000 ₸</div>
+                <div style="color: #4cd964; font-size: 11px;">ACTIVE • SECURE</div>
+            </div>
+            
+            <div class="premium-card">
+                <div style="font-weight: bold; font-size: 18px;">Base Elite</div>
+                <div style="color: #666; font-size: 14px; margin: 8px 0 15px;">Monthly Tier: 7.842 ₸</div>
+                <button class="gold-button" onclick="alert('Operation Confirmed')">Top Up</button>
+            </div>
         </div>
 
-        <div class="plan" style="border-color: #fff;">
-            <div class="plan-name">Ultimate Luxury</div>
-            <div class="plan-price">31.839 ₸ / month</div>
-            <button class="btn gold-bg" onclick="alert('Luxury Activated')">Activate</button>
+        <div id="services" class="view">
+            <div class="premium-card" style="border-left-color: #fff;">
+                <div style="font-weight: bold; font-size: 18px;">Security Access</div>
+                <div style="color: #666; font-size: 14px; margin: 8px 0 15px;">Biometric Scan Required</div>
+                <button class="gold-button" onclick="startSecurityScan()">Start Scanner</button>
+            </div>
+
+            <div class="premium-card">
+                <div style="font-weight: bold; font-size: 18px;">Xcoen Concierge</div>
+                <div style="color: #666; font-size: 14px; margin: 8px 0 15px;">Elite Support 24/7</div>
+                <button class="gold-button" style="background: #fff; color: #000;">Contact Agent</button>
+            </div>
         </div>
     </div>
 
-    <footer>
-        LIFE IS KAMF-TABL
-    </footer>
+    <footer>LIFE IS KAMF-TABL</footer>
 </div>
+
+<script>
+    function showTab(btn, tabId) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        
+        btn.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+    }
+
+    function startSecurityScan() {
+        const laser = document.getElementById('laser');
+        const flash = document.getElementById('flash');
+        
+        laser.style.display = 'block';
+        laser.style.animation = 'scanning 1.5s ease-in-out infinite';
+        
+        setTimeout(() => {
+            laser.style.display = 'none';
+            flash.style.animation = 'flashAnim 0.6s ease-out';
+            setTimeout(() => {
+                flash.style.animation = '';
+                alert('ACCESS GRANTED. WELCOME, BOSS.');
+            }, 600);
+        }, 3000);
+    }
+</script>
 
 </body>
 </html>
