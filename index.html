@@ -29,14 +29,24 @@
             overflow: hidden;
         }
 
-        /* SPLASH SCREEN */
+        /* КРУТОЙ ТЕКСТОВЫЙ СПЛЕШ */
         #splash {
             position: fixed; inset: 0; background: var(--md-surface);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             z-index: 5000; transition: opacity 0.8s ease, visibility 0.8s;
         }
-        .splash-logo { width: 80px; animation: zoomIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .splash-text {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: var(--md-primary);
+            text-transform: uppercase;
+            animation: textZoom 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+        }
+        @keyframes textZoom {
+            0% { transform: scale(0.5); opacity: 0; filter: blur(10px); }
+            100% { transform: scale(1.1); opacity: 1; filter: blur(0); }
+        }
 
         header { padding: 45px 24px 15px; display: flex; align-items: center; gap: 12px; }
         .google-logo { width: 22px; }
@@ -60,19 +70,18 @@
         .gauge-container { width: 160px; height: 160px; border: 6px solid #222; border-top: 6px solid var(--md-primary); border-radius: 50%; margin: 20px auto; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
+        .btn-filled { background: var(--md-primary); color: #062e6f; border: none; padding: 14px; width: 100%; border-radius: 100px; font-weight: 600; cursor: pointer; }
+
         .payment-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: flex-end; z-index: 2000; backdrop-filter: blur(8px); }
         .pay-sheet { width: 100%; max-width: 412px; background: #1c1b1f; border-radius: 28px 28px 0 0; padding: 30px 24px; transform: translateY(100%); transition: 0.4s; }
         .pay-sheet.show { transform: translateY(0); }
         .google-card { background: linear-gradient(135deg, #1a73e8, #8ab4f8); border-radius: 16px; padding: 20px; color: white; margin: 20px 0; }
-        
-        .btn-filled { background: var(--md-primary); color: #062e6f; border: none; padding: 14px; width: 100%; border-radius: 100px; font-weight: 600; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div id="splash">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" class="splash-logo">
-        <div style="margin-top: 20px; font-weight: 500; letter-spacing: 2px; opacity: 0.8;">XCOEN TELECOM</div>
+        <div class="splash-text">XCOEN Telecom</div>
     </div>
 
     <header>
@@ -144,13 +153,13 @@
     </div>
 
     <script>
-        // Убираем Splash Screen через 2 секунды
+        // Скрытие Splash Screen через 2.5 секунды
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash');
                 splash.style.opacity = '0';
                 setTimeout(() => splash.style.visibility = 'hidden', 800);
-            }, 2000);
+            }, 2500);
         });
 
         function navTo(el, id) {
@@ -176,7 +185,7 @@
         function tapGame() { sc += 0.5; document.getElementById('game-score').innerText = `Собрано: ${sc} GB`; }
         function openPay() { document.getElementById('overlay').style.display = 'flex'; setTimeout(() => document.getElementById('sheet').classList.add('show'), 10); }
         function closePay() { document.getElementById('sheet').classList.remove('show'); setTimeout(() => document.getElementById('overlay').style.display = 'none', 400); }
-        function verifyPay() { alert("Оплачено через Google Infrastructure!"); closePay(); }
+        function verifyPay() { alert("Оплачено. KAMF-tabl!"); closePay(); }
     </script>
 </body>
 </html>
