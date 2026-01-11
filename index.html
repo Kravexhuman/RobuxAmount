@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Google XCOEN</title>
+    <title>XCOEN SuperApp</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -15,6 +15,7 @@
             --md-primary: #a8c7fa;
             --md-card: #131314;
             --md-on-surface: #e3e3e3;
+            --md-nav: #1e1f21;
         }
 
         body {
@@ -24,195 +25,189 @@
             margin: 0;
             height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             overflow: hidden;
         }
 
-        .app-shell { width: 100%; max-width: 412px; display: flex; flex-direction: column; position: relative; }
+        header { padding: 45px 24px 15px; display: flex; align-items: center; gap: 12px; background: var(--md-surface); }
+        .google-logo { width: 22px; }
 
-        header { padding: 50px 24px 20px; display: flex; align-items: center; gap: 12px; }
-        .google-logo { width: 24px; animation: fadeIn 0.8s ease; }
-
-        /* Вкладки */
-        .tabs { display: flex; padding: 8px 16px; gap: 8px; }
-        .tab { padding: 10px 20px; border-radius: 25px; font-size: 14px; font-weight: 500; cursor: pointer; color: #8e918f; transition: 0.3s; }
-        .tab.active { background: var(--md-primary); color: #062e6f; }
-
-        /* Контент с анимацией */
-        .content-area { flex: 1; overflow-y: auto; padding: 16px; position: relative; }
-        .view { display: none; opacity: 0; transform: translateY(10px); transition: all 0.4s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 90px; }
+        .view { display: none; opacity: 0; transform: translateY(15px); transition: all 0.4s cubic-bezier(0, 0, 0.2, 1); }
         .view.active { display: block; opacity: 1; transform: translateY(0); }
 
-        /* Карточки */
-        .card { background: var(--md-card); border-radius: 28px; padding: 24px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.05); }
-        .btn-filled { background: var(--md-primary); color: #062e6f; border: none; padding: 14px; width: 100%; border-radius: 100px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .btn-filled:active { transform: scale(0.95); }
+        .card { background: var(--md-card); border-radius: 24px; padding: 20px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.03); }
+        .balance-val { font-size: 36px; color: var(--md-primary); margin: 8px 0; font-weight: 400; }
+        .btn-filled { background: var(--md-primary); color: #062e6f; border: none; padding: 14px; width: 100%; border-radius: 100px; font-weight: 600; cursor: pointer; }
+        .list-item { display: flex; align-items: center; padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
 
-        /* Поп-ап оплаты */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; background: var(--md-nav);
+            display: flex; justify-content: space-around; padding: 12px 0 25px;
+            border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000;
+        }
+        .nav-item { text-align: center; color: #8e918f; font-size: 10px; cursor: pointer; flex: 1; transition: 0.3s; }
+        .nav-item.active { color: var(--md-primary); }
+        .nav-icon { font-size: 22px; margin-bottom: 4px; display: block; }
+
+        /* Speedtest Styles */
+        .speed-gauge {
+            width: 180px; height: 180px; border: 8px solid #222; border-top: 8px solid var(--md-primary);
+            border-radius: 50%; margin: 20px auto; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transition: 0.3s;
+        }
+        .speed-num { font-size: 42px; font-weight: 800; color: var(--md-primary); }
+
+        /* Payment Pop-up */
         .payment-overlay {
-            position: absolute; inset: 0; background: rgba(0,0,0,0.8);
-            display: none; justify-content: center; align-items: flex-end; z-index: 100; backdrop-filter: blur(5px);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            display: none; justify-content: center; align-items: flex-end; z-index: 2000; backdrop-filter: blur(8px);
         }
         .pay-sheet {
-            width: 100%; background: #1c1b1f; border-radius: 28px 28px 0 0;
-            padding: 32px 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0, 0, 0, 1);
+            width: 100%; max-width: 412px; background: #1c1b1f; border-radius: 28px 28px 0 0;
+            padding: 30px 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0, 0, 0, 1);
         }
         .pay-sheet.show { transform: translateY(0); }
+        .google-card { background: linear-gradient(135deg, #1a73e8, #8ab4f8); border-radius: 16px; padding: 20px; color: white; margin: 20px 0; }
 
-        .google-card {
-            background: linear-gradient(135deg, #1a73e8, #8ab4f8);
-            border-radius: 16px; padding: 20px; color: white; margin: 20px 0;
-            text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .face-id-wrap { display: none; margin: 20px 0; text-align: center; }
-        .face-id-ring {
-            width: 60px; height: 60px; border: 3px solid var(--md-primary);
-            border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.2); opacity: 0; } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .pin-input {
-            background: #252529; border: 1px solid #444; color: white;
-            padding: 12px; width: 80%; border-radius: 8px; text-align: center;
-            font-size: 20px; letter-spacing: 10px; margin-bottom: 20px; outline: none;
-        }
-
-        .badge { background: #3d4935; color: #c4eed0; padding: 4px 12px; border-radius: 8px; font-size: 12px; display: inline-block; margin-bottom: 12px; }
-
-        footer { 
-            padding: 24px; text-align: center; font-size: 11px; color: #555; 
-            opacity: 0; animation: fadeIn 1s ease forwards; animation-delay: 0.5s;
-        }
+        @keyframes pulse { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div class="app-shell">
     <header>
         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" class="google-logo">
-        <span style="font-weight: 500;">XCOEN Telecom</span>
+        <span style="font-size: 14px; font-weight: 500; letter-spacing: 0.5px;">XCOEN</span>
     </header>
 
-    <div class="tabs">
-        <div class="tab active" onclick="switchTab(this, 'main')">Главная</div>
-        <div class="tab" onclick="switchTab(this, 'plans')">Тарифы</div>
-        <div class="tab" onclick="switchTab(this, 'promo')">Акции</div>
-    </div>
-
     <div class="content-area">
-        <div id="main" class="view active">
+        <div id="view-home" class="view active">
             <div class="card">
-                <div style="font-size: 11px; opacity: 0.6; letter-spacing: 1px;">G-BALANCE</div>
-                <div style="font-size: 40px; color: var(--md-primary); margin: 10px 0;">150 000 ₸</div>
-                <div style="font-size: 14px; opacity: 0.9;">Статус: Premium Account</div>
-            </div>
-            <p style="padding-left: 8px; font-size: 13px; opacity: 0.5;">Everything is KAMF-tabl.</p>
-        </div>
-
-        <div id="plans" class="view">
-            <div class="card" style="border: 1px solid var(--md-primary);">
-                <div class="badge">ULTIMATE 5GUA</div>
-                <div style="font-size: 20px; font-weight: 500;">XCOEN Quantum</div>
-                <div style="color: var(--md-primary); margin: 5px 0 15px;">31.839 ₸ / мес</div>
-                <button class="btn-filled" onclick="openPay('31.839')">Активировать</button>
+                <div style="font-size: 11px; opacity: 0.6;">AVAILABLE BALANCE</div>
+                <div class="balance-val">3 539 ₸</div>
+                <div style="font-size: 12px; color: #8bc34a;">● Status: KAMF-tabl (ERRRR!)</div>
             </div>
             <div class="card">
-                <div style="font-size: 20px; font-weight: 500;">Base Elite</div>
-                <div style="color: #888; margin: 5px 0 15px;">7.842 ₸ / мес</div>
-                <button class="btn-filled" onclick="openPay('7.842')">Выбрать</button>
+                <div style="font-size: 14px; margin-bottom: 12px;">Активный тариф</div>
+                <div style="font-size: 18px; font-weight: 500;">Quantum Luxury 5G</div>
+                <button class="btn-filled" style="margin-top:15px; background: #2c2c2e; color: #fff;">Управление</button>
             </div>
         </div>
 
-        <div id="promo" class="view">
-            <div class="card">
-                <div class="badge">EXCLUSIVE</div>
-                <div style="font-size: 18px; font-weight: 500;">Double Speed</div>
-                <p style="font-size: 13px; opacity: 0.7;">Ускорение канала в 2 раза для верных кентов Google XCOEN.</p>
-                <button class="btn-filled" onclick="openPay('0')">Получить</button>
+        <div id="view-services" class="view">
+            <h3 style="margin-left: 8px;">Услуги</h3>
+            <div class="card" style="padding: 0;">
+                <div class="list-item">🛡️ Безопасность <span style="margin-left:auto; opacity:0.3;">></span></div>
+                <div class="list-item" onclick="openPay('0', 'Акции')">🎁 Акции <span style="margin-left:auto; opacity:0.3;">></span></div>
+                <div class="list-item">✈️ Роуминг <span style="margin-left:auto; opacity:0.3;">></span></div>
+            </div>
+        </div>
+
+        <div id="view-game" class="view">
+            <h3>XCOEN Hunt</h3>
+            <div class="card" style="text-align: center;">
+                <p style="font-size: 13px; opacity: 0.8;">Тапай по вышке — лутай ГБ!</p>
+                <div style="font-size: 60px; margin: 20px 0; cursor: pointer;" onclick="tapGame()">🗼</div>
+                <p id="game-score" style="font-weight: 500;">Собрано: 0 GB</p>
+            </div>
+        </div>
+
+        <div id="view-network" class="view">
+            <h3>Анализ сети</h3>
+            <div class="card" style="text-align: center;">
+                <div class="speed-gauge" id="gauge">
+                    <div class="speed-num" id="speed-val">0</div>
+                    <div style="font-size: 12px; opacity: 0.6;">Mbps</div>
+                </div>
+                <p id="test-status" style="font-size: 14px; margin: 15px 0;">5GUA канал готов к тесту</p>
+                <button class="btn-filled" onclick="startSpeedTest()">Запустить Speedtest</button>
             </div>
         </div>
     </div>
 
-    <footer>
-        <div style="margin-bottom: 4px;">Powered by Google Infrastructure</div>
-        <div style="font-size: 9px; letter-spacing: 1px;">© 2026 XCOEN GLOBAL</div>
-    </footer>
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="navTo(this, 'view-home')">
+            <span class="nav-icon">🏠</span>Главная
+        </div>
+        <div class="nav-item" onclick="navTo(this, 'view-services')">
+            <span class="nav-icon">📦</span>Услуги
+        </div>
+        <div class="nav-item" onclick="navTo(this, 'view-game')">
+            <span class="nav-icon">🎮</span>Игра
+        </div>
+        <div class="nav-item" onclick="navTo(this, 'view-network')">
+            <span class="nav-icon">🛰️</span>Сеть
+        </div>
+    </nav>
 
     <div class="payment-overlay" id="overlay">
         <div class="pay-sheet" id="sheet">
             <div style="text-align: center; margin-bottom: 20px;">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" width="28">
-                <div style="margin-top: 10px; font-weight: 500; font-size: 14px;">Google Pay</div>
+                <div style="margin-top: 8px; font-weight: 500;">Google Pay</div>
             </div>
-
             <div class="google-card">
                 <div style="font-size: 11px; opacity: 0.8;">XCOEN PREFERRED</div>
                 <div style="margin: 15px 0; font-size: 18px; letter-spacing: 2px;">•••• •••• •••• 7777</div>
-                <div style="font-size: 9px; letter-spacing: 1px;">PREMIUM AGASHKA</div>
+                <div style="font-size: 9px;">PREMIUM AGASHKA</div>
             </div>
-
-            <div id="face-id" class="face-id-wrap">
-                <div class="face-id-ring"></div>
-                <p style="font-size: 12px; color: var(--md-primary); margin-top: 12px;">Проверка FaceID...</p>
-            </div>
-
-            <div id="pin-section">
-                <p style="font-size: 13px; margin-bottom: 12px; opacity: 0.8;">Введите код подтверждения:</p>
-                <input type="password" id="pin" class="pin-input" maxlength="4" placeholder="••••" autofocus>
-                <button class="btn-filled" onclick="verifyPay()">Подтвердить оплату</button>
-            </div>
-            
-            <p onclick="closePay()" style="text-align:center; color: #555; font-size: 13px; margin-top: 24px; cursor: pointer;">Отмена</p>
+            <button class="btn-filled" onclick="verifyPay()">Подтвердить FaceID</button>
+            <p onclick="closePay()" style="text-align:center; color:#555; margin-top:20px; font-size:13px;">Отмена</p>
         </div>
     </div>
-</div>
 
-<script>
-    let currentPrice = "";
-
-    function switchTab(el, id) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        
-        el.classList.add('active');
-        const target = document.getElementById(id);
-        target.classList.add('active');
-    }
-
-    function openPay(price) {
-        currentPrice = price;
-        document.getElementById('overlay').style.display = 'flex';
-        setTimeout(() => document.getElementById('sheet').classList.add('show'), 10);
-    }
-
-    function closePay() {
-        document.getElementById('sheet').classList.remove('show');
-        setTimeout(() => {
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('pin-section').style.display = 'block';
-            document.getElementById('face-id').style.display = 'none';
-            document.getElementById('pin').value = '';
-        }, 400);
-    }
-
-    function verifyPay() {
-        const pin = document.getElementById('pin').value;
-        if(pin === "7777") {
-            document.getElementById('pin-section').style.display = 'none';
-            document.getElementById('face-id').style.display = 'block';
-            
-            setTimeout(() => {
-                alert("Транзакция одобрена. Тариф активирован через Google Infrastructure!");
-                closePay();
-            }, 2000);
-        } else {
-            alert("Код неверный,попробуйте еще раз.");
+    <script>
+        function navTo(el, viewId) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById(viewId).classList.add('active');
         }
-    }
-</script>
 
+        function startSpeedTest() {
+            const val = document.getElementById('speed-val');
+            const status = document.getElementById('test-status');
+            const gauge = document.getElementById('gauge');
+            
+            status.innerText = "Подключение к Google Core...";
+            gauge.style.animation = "rotate 1s linear infinite";
+            
+            let current = 0;
+            let target = 942.8; // Элитная скорость
+            
+            let interval = setInterval(() => {
+                current += Math.random() * 50;
+                if(current >= target) {
+                    current = target;
+                    clearInterval(interval);
+                    gauge.style.animation = "";
+                    status.innerText = "Тест завершен. Скорость идеальна!";
+                }
+                val.innerText = current.toFixed(1);
+            }, 100);
+        }
+
+        function tapGame() {
+            let scoreVal = parseFloat(document.getElementById('game-score').innerText.replace('Собрано: ', ''));
+            scoreVal += 0.5;
+            document.getElementById('game-score').innerText = `Собрано: ${scoreVal} GB`;
+        }
+
+        function openPay() {
+            document.getElementById('overlay').style.display = 'flex';
+            setTimeout(() => document.getElementById('sheet').classList.add('show'), 10);
+        }
+
+        function closePay() {
+            document.getElementById('sheet').classList.remove('show');
+            setTimeout(() => document.getElementById('overlay').style.display = 'none', 400);
+        }
+
+        function verifyPay() {
+            alert("Платеж через Google Infrastructure подтвержден!");
+            closePay();
+        }
+    </script>
 </body>
 </html>
