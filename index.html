@@ -1,54 +1,74 @@
-text-transform: uppercase;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xcoen Internet</title>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/flat-round/512/letter-x.png">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/flat-round/512/letter-x.png">
+    
+    <style>
+        body { background: #121212; color: #fff; font-family: sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; }
+        .app { width: 100%; max-width: 400px; min-height: 100vh; background: #121212; border: 1px solid #333; display: flex; flex-direction: column; }
+        
+        /* Золотой градиент для текста и кнопок */
+        .gold-text { background: linear-gradient(135deg, #D4AF37, #F1D382, #B8860B); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold; }
+        .gold-bg { background: linear-gradient(135deg, #D4AF37, #F1D382, #B8860B); color: #000; }
 
-        .gold-btn:active { transform: scale(0.98); opacity: 0.9; }
+        header { padding: 40px 20px 20px; text-align: center; border-bottom: 1px solid #222; }
+        .logo { font-size: 24px; letter-spacing: 5px; }
 
-        /* Bottom Nav Mockup */
-        .bottom-nav {
-            padding: 20px;
-            text-align: center;
-            font-size: 11px;
-            color: var(--text-secondary);
-            letter-spacing: 2px;
-        }
+        .balance-box { margin: 20px; padding: 30px; background: #1c1c1c; border-radius: 20px; text-align: center; border: 1px solid rgba(212,175,55,0.2); }
+        .balance-val { font-size: 40px; margin: 10px 0; }
+
+        .tabs { display: flex; padding: 0 20px; gap: 10px; }
+        .tab { flex: 1; padding: 12px; text-align: center; background: #222; border-radius: 10px; cursor: pointer; color: #888; }
+        .tab.active { background: #333; color: #fff; border: 1px solid #444; }
+
+        .plans { padding: 20px; flex: 1; }
+        .plan { background: #1c1c1c; border-radius: 15px; padding: 20px; margin-bottom: 15px; border-left: 4px solid #D4AF37; }
+        .plan-name { font-size: 18px; margin-bottom: 5px; }
+        .plan-price { font-size: 14px; color: #888; margin-bottom: 15px; }
+
+        .btn { border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
+        
+        footer { padding: 20px; text-align: center; font-size: 12px; color: #444; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <div class="logo">XCOEN</div>
-    </div>
+<div class="app">
+    <header>
+        <div class="logo gold-text">XCOEN</div>
+    </header>
 
     <div class="tabs">
-        <div class="tab active">Overview</div>
-        <div class="tab">Services</div>
+        <div class="tab active">OVERVIEW</div>
+        <div class="tab">SERVICES</div>
     </div>
 
-    <div class="balance-card">
-        <div class="balance-label">Available Funds</div>
-        <div class="balance-amount">150 000 ₸</div>
+    <div class="balance-box">
+        <div style="font-size: 12px; color: #666; letter-spacing: 1px;">AVAILABLE BALANCE</div>
+        <div class="balance-val gold-text">150 000 ₸</div>
     </div>
 
-    <div class="plans-list">
-        <div class="plan-card">
+    <div class="plans">
+        <div class="plan">
             <div class="plan-name">Base Elite</div>
             <div class="plan-price">7.842 ₸ / month</div>
-            <button class="gold-btn">Upgrade</button>
+            <button class="btn gold-bg" onclick="alert('Confirmed')">Upgrade</button>
         </div>
 
-        <div class="plan-card" style="background: linear-gradient(145deg, #252525, #121212);">
+        <div class="plan" style="border-color: #fff;">
             <div class="plan-name">Ultimate Luxury</div>
-            <div class="plan-price" style="color: #D4AF37;">31.839 ₸ / month</div>
-            <button class="gold-btn">Activate Luxury</button>
+            <div class="plan-price">31.839 ₸ / month</div>
+            <button class="btn gold-bg" onclick="alert('Luxury Activated')">Activate</button>
         </div>
     </div>
 
-    <div class="bottom-nav">
+    <footer>
         LIFE IS KAMF-TABL
-    </div>
+    </footer>
 </div>
 
 </body>
