@@ -1,72 +1,124 @@
-<div class="tariff-name">Base Start</div>
-            <div class="tariff-price">7.842 ₸</div>
-            <button class="btn" onclick="showPayment('7.842')">Выбрать</button>
+box-shadow: 0 10px 20px rgba(170, 119, 28, 0.2);
+        }
+
+        /* Apple Pay Overlay */
+        .overlay {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            align-items: flex-end;
+        }
+
+        .sheet {
+            width: 100%;
+            background: #1c1c1e;
+            border-radius: 30px 30px 0 0;
+            padding: 30px 20px 50px;
+            transform: translateY(100%);
+            transition: 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            text-align: center;
+        }
+
+        .sheet.show { transform: translateY(0); }
+
+        .apple-logo { font-size: 40px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <div class="logo-text">XCOEN</div>
+        <p style="color: #666; font-size: 12px; margin-top: 5px;">ESTABLISHED FOR AGASHKAS</p>
+    </div>
+
+    <div class="tab-bar">
+        <div class="tab active" onclick="switchTab(this, 'home')">Home</div>
+        <div class="tab" onclick="switchTab(this, 'plans')">Tariffs</div>
+    </div>
+
+    <div class="main-content">
+        <div id="home" class="section active">
+            <div class="card" style="text-align: center; padding: 40px 20px;">
+                <span style="color: #888; font-size: 12px; font-weight: bold;">CURRENT BALANCE</span>
+                <div style="font-size: 48px; font-weight: 900; margin: 10px 0;">150 000 ₸</div>
+                <div style="color: #4cd964; font-size: 12px;">● Status: KAMF-tabl (ERRRR!)</div>
+            </div>
+            <button class="btn-action" onclick="alert('Ready to top up, boss!')">Top Up Balance</button>
         </div>
 
-        <div class="tariff-card" style="border-left-color: white; background: linear-gradient(145deg, #2d2d2d, #1a1a1a);">
-            <div class="tariff-name">Ultimate Luxury</div>
-            <div class="tariff-price">31.839 ₸</div>
-            <button class="btn" style="background: white;" onclick="showPayment('31.839')">Включить люкс</button>
+        <div id="plans" class="section">
+            <div class="card">
+                <div class="card-title">Base Start</div>
+                <div class="card-price">7.842 ₸</div>
+                <div class="card-features">
+                    • 20 GB of High-Speed Data<br>
+                    • Unlimited Social Media<br>
+                    • Western Education Support
+                </div>
+                <button class="btn-action" onclick="pay('7.842')">Choose Plan</button>
+            </div>
+
+            <div class="card premium">
+                <div class="card-title">Ultimate Luxury</div>
+                <div class="card-price">31.839 ₸</div>
+                <div class="card-features">
+                    • Absolute Infinite Data<br>
+                    • Max Speed Priority (5G+)<br>
+                    • VIP Concierge ERRRR!
+                </div>
+                <button class="btn-action" style="background: #fff; color: #000;" onclick="pay('31.839')">Activate Luxury</button>
+            </div>
         </div>
     </div>
 
-    <div class="overlay" id="paymentOverlay">
-        <div class="payment-modal" id="modal">
-            <div class="apple-pay-icon"></div>
-            <div class="modal-text">Оплатить вашей основной картой?</div>
-            <div class="card-info">
-                <span>•••• 8888</span>
-                <span style="color: var(--gold); font-weight: bold;">XCOEN GOLD</span>
+    <div class="overlay" id="overlay" onclick="closePay()">
+        <div class="sheet" id="sheet" onclick="event.stopPropagation()">
+            <div class="apple-logo"></div>
+            <h3 style="margin-bottom: 5px;">Confirm Payment</h3>
+            <p style="color: #888; font-size: 14px; margin-bottom: 25px;">Pay with your main XCOEN GOLD card?</p>
+            <div style="background: #2c2c2e; padding: 15px; border-radius: 15px; margin-bottom: 30px; display: flex; justify-content: space-between;">
+                <span>Card •••• 8888</span>
+                <span id="payAmount" style="font-weight: bold; color: #bf953f;"></span>
             </div>
-            <div id="priceDisplay" style="margin-bottom: 20px; font-size: 20px; font-weight: bold;"></div>
-            <button class="confirm-btn" onclick="processPayment()">Да, я осознаю</button>
-            <p onclick="closePayment()" style="margin-top: 15px; color: var(--grey); font-size: 13px; cursor: pointer;">Отмена</p>
+            <button class="btn-action" style="background: #fff;" onclick="confirmPay()">Pay with Touch ID</button>
         </div>
     </div>
 </div>
 
-<audio id="paySound" src="https://www.soundjay.com/buttons/sounds/button-37a.mp3"></audio>
+<audio id="ding" src="https://www.soundjay.com/buttons/sounds/button-37a.mp3"></audio>
 
 <script>
-    function openTab(evt, tabName) {
-        var i, content, tabs;
-        content = document.getElementsByClassName("content");
-        for (i = 0; i < content.length; i++) content[i].classList.remove("active");
-        tabs = document.getElementsByClassName("tab");
-        for (i = 0; i < tabs.length; i++) tabs[i].classList.remove("active");
-        document.getElementById(tabName).classList.add("active");
-        evt.currentTarget.classList.add("active");
+    function switchTab(el, sectionId) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById(sectionId).classList.add('active');
     }
 
-    function showPayment(price) {
-        document.getElementById('priceDisplay').innerText = price + " ₸";
-        document.getElementById('paymentOverlay').style.display = 'flex';
-        setTimeout(() => {
-            document.getElementById('modal').classList.add('show');
-        }, 10);
+    function pay(price) {
+        document.getElementById('payAmount'). innerText = price + ' ₸';
+        document.getElementById('overlay').style.display = 'flex';
+        setTimeout(() => document.getElementById('sheet').classList.add('show'), 50);
     }
 
-    function closePayment() {
-        document.getElementById('modal').classList.remove('show');
-        setTimeout(() => {
-            document.getElementById('paymentOverlay').style.display = 'none';
-        }, 400);
+    function closePay() {
+        document.getElementById('sheet').classList.remove('show');
+        setTimeout(() => document.getElementById('overlay').style.display = 'none', 400);
     }
 
-    function processPayment() {
-        const sound = document.getElementById('paySound');
-        sound.play();
-        
-        const btn = document.querySelector('.confirm-btn');
-        btn.innerText = "ПОДТВЕРЖДЕНО...";
-        btn.style.background = "#4cd964"; // Зеленый эппловский цвет
-        
+    function confirmPay() {
+        document.getElementById('ding').play();
+        const btn = document.querySelector('.sheet .btn-action');
+        btn.innerText = "DONE. KAMF-TABL!";
+        btn.style.background = "#4cd964";
         setTimeout(() => {
-            alert("Платеж прошел успешно. Статус: Premium Agashka активирован. ERRRR!");
-            closePayment();
-            btn.innerText = "Да, я осознаю";
-            btn.style.background = "white";
-        }, 1000);
+            closePay();
+            btn.innerText = "Pay with Touch ID";
+            btn.style.background = "#fff";
+        }, 1500);
     }
 </script>
 
