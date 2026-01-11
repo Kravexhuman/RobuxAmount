@@ -1,72 +1,74 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nostalgram</title>
-    <style>
-        body { font-family: -apple-system, sans-serif; background: #000; color: #fff; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        
-        /* Экран входа */
-        #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; position: fixed; background: #000; z-index: 10; }
-        .logo { font-size: 32px; font-weight: bold; font-style: italic; margin-bottom: 20px; letter-spacing: -1px; }
-        input { background: #121212; border: 1px solid #333; padding: 12px; border-radius: 8px; color: #fff; margin-bottom: 10px; width: 250px; text-align: center; outline: none; }
-        .login-btn { background: #0095f6; border: none; color: #fff; padding: 10px 20px; border-radius: 8px; font-weight: bold; width: 250px; }
+<div class="tariff-name">Base Start</div>
+            <div class="tariff-price">7.842 ₸</div>
+            <button class="btn" onclick="showPayment('7.842')">Выбрать</button>
+        </div>
 
-        /* Основной контент */
-        #app { display: none; width: 100%; max-width: 500px; padding-top: 20px; }
-        .header { position: sticky; top: 0; background: rgba(0,0,0,0.9); padding: 15px; text-align: center; border-bottom: 1px solid #121212; font-size: 20px; font-weight: bold; }
-        
-        .feed { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; padding: 2px; }
-        .photo { width: 100%; aspect-ratio: 1/1; background: #121212; object-fit: cover; cursor: pointer; }
-        
-        /* Инструкция как добавлять */
-        .admin-panel { padding: 20px; font-size: 12px; color: #555; text-align: center; line-height: 1.6; }
-        code { color: #0095f6; }
-    </style>
-</head>
-<body>
-
-    <div id="login-screen">
-        <div class="logo">Nostalgram</div>
-        <input type="password" id="pass" placeholder="Введите код доступа">
-        <button class="login-btn" onclick="checkPass()">Войти</button>
-        <div id="wrong" style="color: red; font-size: 12px; margin-top: 10px; display: none;">Неверный код</div>
-    </div>
-
-    <div id="app">
-        <div class="header">nostalgram</div>
-        
-        <div class="feed">
-            <img class="photo" src="https://images.unsplash.com/photo-1554080353-a576cf803bda?w=500" alt="photo">
-            <img class="photo" src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=500" alt="photo">
-            <img class="photo" src="https://images.unsplash.com/photo-1508919801845-fc2ae1bc2a28?w=500" alt="photo">
-            </div>
-
-        <div class="admin-panel">
-            <p>Чтобы добавить фото: открой код на GitHub,<br>найди блок <code>class="feed"</code> и добавь новую строку <code>&lt;img class="photo" src="ССЫЛКА"&gt;</code></p>
-            <p>Пароль по умолчанию: <code>0000</code></p>
+        <div class="tariff-card" style="border-left-color: white; background: linear-gradient(145deg, #2d2d2d, #1a1a1a);">
+            <div class="tariff-name">Ultimate Luxury</div>
+            <div class="tariff-price">31.839 ₸</div>
+            <button class="btn" style="background: white;" onclick="showPayment('31.839')">Включить люкс</button>
         </div>
     </div>
 
+    <div class="overlay" id="paymentOverlay">
+        <div class="payment-modal" id="modal">
+            <div class="apple-pay-icon"></div>
+            <div class="modal-text">Оплатить вашей основной картой?</div>
+            <div class="card-info">
+                <span>•••• 8888</span>
+                <span style="color: var(--gold); font-weight: bold;">XCOEN GOLD</span>
+            </div>
+            <div id="priceDisplay" style="margin-bottom: 20px; font-size: 20px; font-weight: bold;"></div>
+            <button class="confirm-btn" onclick="processPayment()">Да, я осознаю</button>
+            <p onclick="closePayment()" style="margin-top: 15px; color: var(--grey); font-size: 13px; cursor: pointer;">Отмена</p>
+        </div>
+    </div>
+</div>
+
+<audio id="paySound" src="https://www.soundjay.com/buttons/sounds/button-37a.mp3"></audio>
+
 <script>
-    function checkPass() {
-        const p = document.getElementById('pass').value;
-        const correct = "0000"; // МОЖЕШЬ ПОМЕНЯТЬ ПАРОЛЬ ТУТ
-        
-        if(p === correct) {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('app').style.display = 'block';
-        } else {
-            document.getElementById('wrong').style.display = 'block';
-            setTimeout(() => { document.getElementById('wrong').style.display = 'none'; }, 2000);
-        }
+    function openTab(evt, tabName) {
+        var i, content, tabs;
+        content = document.getElementsByClassName("content");
+        for (i = 0; i < content.length; i++) content[i].classList.remove("active");
+        tabs = document.getElementsByClassName("tab");
+        for (i = 0; i < tabs.length; i++) tabs[i].classList.remove("active");
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
     }
 
-    // Вход по нажатию Enter
-    document.getElementById('pass').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') { checkPass(); }
-    });
+    function showPayment(price) {
+        document.getElementById('priceDisplay').innerText = price + " ₸";
+        document.getElementById('paymentOverlay').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('modal').classList.add('show');
+        }, 10);
+    }
+
+    function closePayment() {
+        document.getElementById('modal').classList.remove('show');
+        setTimeout(() => {
+            document.getElementById('paymentOverlay').style.display = 'none';
+        }, 400);
+    }
+
+    function processPayment() {
+        const sound = document.getElementById('paySound');
+        sound.play();
+        
+        const btn = document.querySelector('.confirm-btn');
+        btn.innerText = "ПОДТВЕРЖДЕНО...";
+        btn.style.background = "#4cd964"; // Зеленый эппловский цвет
+        
+        setTimeout(() => {
+            alert("Платеж прошел успешно. Статус: Premium Agashka активирован. ERRRR!");
+            closePayment();
+            btn.innerText = "Да, я осознаю";
+            btn.style.background = "white";
+        }, 1000);
+    }
 </script>
+
 </body>
 </html>
