@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Google XCOEN</title>
-    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google "G" Logo.svg/512px-Google "G" Logo.svg.png">
@@ -12,10 +11,9 @@
     <style>
         :root {
             --md-surface: #0a0c10;
-            --md-primary: #a8c7fa; /* Material Blue */
-            --md-secondary: #3b4859;
-            --md-on-surface: #e3e3e3;
+            --md-primary: #a8c7fa;
             --md-card: #131314;
+            --md-on-surface: #e3e3e3;
         }
 
         body {
@@ -23,114 +21,63 @@
             color: var(--md-on-surface);
             font-family: 'Google Sans', Roboto, sans-serif;
             margin: 0;
+            height: 100vh;
             display: flex;
             justify-content: center;
-            height: 100vh;
             overflow: hidden;
         }
 
-        .app-shell {
-            width: 100%;
-            max-width: 412px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
+        .app-shell { width: 100%; max-width: 412px; display: flex; flex-direction: column; position: relative; }
 
-        header {
-            padding: 50px 24px 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        header { padding: 50px 24px 20px; display: flex; align-items: center; gap: 12px; }
+        .google-logo { width: 24px; }
 
-        .google-logo {
-            width: 24px;
-            height: 24px;
-        }
+        /* Вкладки */
+        .tabs { display: flex; padding: 8px 16px; gap: 8px; }
+        .tab { padding: 10px 20px; border-radius: 25px; font-size: 14px; font-weight: 500; cursor: pointer; color: #8e918f; }
+        .tab.active { background: var(--md-primary); color: #062e6f; }
 
-        .brand-name {
-            font-size: 20px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-
-        /* Material You Tabs */
-        .tabs {
-            display: flex;
-            padding: 8px 16px;
-            gap: 8px;
-            overflow-x: auto;
-        }
-
-        .tab {
-            padding: 10px 20px;
-            border-radius: 25px;
-            background: transparent;
-            color: var(--md-on-surface);
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.2s;
-            white-space: nowrap;
-        }
-
-        .tab.active {
-            background: var(--md-primary);
-            color: #062e6f;
-        }
-
-        .content {
-            flex: 1;
-            padding: 16px;
-            overflow-y: auto;
-            display: none;
-        }
-
+        .content { flex: 1; padding: 16px; overflow-y: auto; display: none; }
         .content.active { display: block; }
 
-        /* Material Cards */
-        .card {
-            background: var(--md-card);
-            border-radius: 28px;
-            padding: 24px;
-            margin-bottom: 16px;
-            border: 1px solid rgba(255,255,255,0.05);
+        /* Карточки */
+        .card { background: var(--md-card); border-radius: 28px; padding: 24px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.05); }
+        .btn-filled { background: var(--md-primary); color: #062e6f; border: none; padding: 14px; width: 100%; border-radius: 100px; font-weight: 600; cursor: pointer; }
+
+        /* Поп-ап оплаты (Android Pay Style) */
+        .payment-overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.8);
+            display: none; justify-content: center; align-items: flex-end; z-index: 100;
+        }
+        .pay-sheet {
+            width: 100%; background: #1c1b1f; border-radius: 28px 28px 0 0;
+            padding: 32px 24px; transform: translateY(100%); transition: 0.4s cubic-bezier(0, 0, 0, 1);
+        }
+        .pay-sheet.show { transform: translateY(0); }
+
+        /* Виртуальная карта */
+        .google-card {
+            background: linear-gradient(135deg, #1a73e8, #8ab4f8);
+            border-radius: 16px; padding: 20px; color: white; margin: 20px 0;
+            text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        .balance-text { font-size: 48px; font-weight: 400; margin: 12px 0; color: var(--md-primary); }
-        
-        .plan-title { font-size: 22px; margin-bottom: 4px; font-weight: 500; }
-        .plan-price { font-size: 16px; color: var(--md-primary); margin-bottom: 16px; }
+        /* Анимация FaceID */
+        .face-id-wrap { display: none; margin: 20px 0; text-align: center; }
+        .face-id-ring {
+            width: 60px; height: 60px; border: 3px solid var(--md-primary);
+            border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.2); opacity: 0; } }
 
-        .btn-filled {
-            background: var(--md-primary);
-            color: #062e6f;
-            border: none;
-            padding: 14px;
-            width: 100%;
-            border-radius: 100px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
+        /* Код подтверждения */
+        .pin-input {
+            background: #252529; border: 1px solid #444; color: white;
+            padding: 12px; width: 80%; border-radius: 8px; text-align: center;
+            font-size: 20px; letter-spacing: 10px; margin-bottom: 20px;
         }
 
-        .badge {
-            background: #3d4935;
-            color: #c4eed0;
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            display: inline-block;
-            margin-bottom: 12px;
-        }
-
-        footer {
-            padding: 24px;
-            text-align: center;
-            font-size: 12px;
-            color: #8e918f;
-        }
+        footer { padding: 20px; text-align: center; font-size: 11px; color: #555; }
     </style>
 </head>
 <body>
@@ -138,61 +85,100 @@
 <div class="app-shell">
     <header>
         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google "G" Logo.svg/512px-Google "G" Logo.svg.png" class="google-logo">
-        <div class="brand-name">XCOEN Telecom</div>
+        <span style="font-weight: 500;">XCOEN Telecom</span>
     </header>
 
     <div class="tabs">
-        <div class="tab active" onclick="setTab(this, 'main')">Главная</div>
-        <div class="tab" onclick="setTab(this, 'plans')">Тарифы</div>
-        <div class="tab" onclick="setTab(this, 'promo')">Акции</div>
+        <div class="tab active" onclick="switchTab(this, 'main')">Главная</div>
+        <div class="tab" onclick="switchTab(this, 'plans')">Тарифы</div>
     </div>
 
     <div id="main" class="content active">
         <div class="card">
-            <div style="font-size: 12px; opacity: 0.7;">БАЛАНС G-ACCOUNT</div>
-            <div class="balance-text">150 000 ₸</div>
-            <button class="btn-filled">Пополнить через G-Pay</button>
+            <div style="font-size: 12px; opacity: 0.6;">G-BALANCE</div>
+            <div style="font-size: 40px; color: var(--md-primary); margin: 10px 0;">150 000 ₸</div>
+            <div style="font-size: 14px;">Статус: Premium Account</div>
         </div>
-        <div style="padding-left: 8px; font-size: 14px; opacity: 0.8;">Everything is KAMF-tabl.</div>
     </div>
 
     <div id="plans" class="content">
         <div class="card">
-            <div class="plan-title">Base Elite</div>
-            <div class="plan-price">7.842 ₸ / мес</div>
-            <button class="btn-filled">Выбрать</button>
+            <div style="font-size: 20px; font-weight: 500;">Quantum 5GUA</div>
+            <div style="color: var(--md-primary); margin: 5px 0 15px;">31.839 ₸ / мес</div>
+            <button class="btn-filled" onclick="openPay('31.839')">Подключить</button>
         </div>
+    </div>
 
-        <div class="card" style="background: linear-gradient(180deg, #131314 0%, #1a2333 100%); border: 1px solid var(--md-primary);">
-            <div class="badge">УЛЬТИМАТИВНЫЙ 5GUA</div>
-            <div class="plan-title">XCOEN Quantum</div>
-            <div class="plan-price">31.839 ₸ / мес</div>
-            <div style="font-size: 13px; opacity: 0.7; margin-bottom: 20px;">
-                • Полный безлимит без ограничений скорости<br>
-                • Приоритетный канал Google Fiber<br>
-                • Шифрование данных G-Shield
+    <div class="payment-overlay" id="overlay">
+        <div class="pay-sheet" id="sheet">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google "G" Logo.svg/512px-Google "G" Logo.svg.png" width="30">
+                <div style="margin-top: 10px; font-weight: 500;">Google Pay</div>
             </div>
-            <button class="btn-filled">Активировать 5GUA</button>
+
+            <div class="google-card">
+                <div style="font-size: 12px; opacity: 0.8;">XCOEN PREFERRED</div>
+                <div style="margin: 15px 0; font-size: 18px;">•••• •••• •••• 7777</div>
+                <div style="font-size: 10px;">PREMIUM AGASHKA</div>
+            </div>
+
+            <div id="face-id" class="face-id-wrap">
+                <div class="face-id-ring"></div>
+                <p style="font-size: 12px; color: var(--md-primary);">Проверка FaceID...</p>
+            </div>
+
+            <div id="pin-section">
+                <p style="font-size: 14px; margin-bottom: 10px;">Введите секретный код:</p>
+                <input type="password" id="pin" class="pin-input" maxlength="4" placeholder="••••">
+                <button class="btn-filled" onclick="verifyPay()">Подтвердить</button>
+            </div>
+            
+            <p onclick="closePay()" style="text-align:center; color: #888; font-size: 13px; margin-top: 20px; cursor: pointer;">Отмена</p>
         </div>
     </div>
 
-    <div id="promo" class="content">
-        <div class="card">
-            <div class="badge">NEW</div>
-            <div class="plan-title">Family Link Plus</div>
-            <div style="font-size: 14px; opacity: 0.7;">Скидка 50% на второй номер для братишки.</div>
-        </div>
-    </div>
-
-    <footer>Powered by Google Infrastructure</footer>
+    <footer>LIFE IS KAMF-TABL</footer>
 </div>
 
 <script>
-    function setTab(el, id) {
+    let currentPrice = "";
+
+    function switchTab(el, id) {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
         document.getElementById(id).classList.add('active');
+    }
+
+    function openPay(price) {
+        currentPrice = price;
+        document.getElementById('overlay').style.display = 'flex';
+        setTimeout(() => document.getElementById('sheet').classList.add('show'), 10);
+    }
+
+    function closePay() {
+        document.getElementById('sheet').classList.remove('show');
+        setTimeout(() => {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('pin-section').style.display = 'block';
+            document.getElementById('face-id').style.display = 'none';
+            document.getElementById('pin').value = '';
+        }, 400);
+    }
+
+    function verifyPay() {
+        const pin = document.getElementById('pin').value;
+        if(pin === "7777") {
+            document.getElementById('pin-section').style.display = 'none';
+            document.getElementById('face-id').style.display = 'block';
+            
+            setTimeout(() => {
+                alert("Оплата " + currentPrice + " ₸ прошла успешно. Google XCOEN 5GUA активирован!");
+                closePay();
+            }, 2500);
+        } else {
+            alert("Неверный код доступа!");
+        }
     }
 </script>
 
