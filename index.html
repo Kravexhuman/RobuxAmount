@@ -3,26 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xcoen Internet</title>
+    <title>Google XCOEN</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Xcoen">
-    
-    <link rel="apple-touch-icon" href="https://img.icons8.com/flat-round/512/letter-x.png">
+    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google "G" Logo.svg/512px-Google "G" Logo.svg.png">
 
     <style>
         :root {
-            --gold: linear-gradient(135deg, #D4AF37 0%, #F1D382 50%, #B8860B 100%);
-            --bg: #0a0a0a;
-            --card: #1c1c1e;
-            --gold-solid: #D4AF37;
+            --md-surface: #0a0c10;
+            --md-primary: #a8c7fa; /* Material Blue */
+            --md-secondary: #3b4859;
+            --md-on-surface: #e3e3e3;
+            --md-card: #131314;
         }
 
         body {
-            background-color: var(--bg);
-            color: #fff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--md-surface);
+            color: var(--md-on-surface);
+            font-family: 'Google Sans', Roboto, sans-serif;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -30,223 +29,170 @@
             overflow: hidden;
         }
 
-        .app-container {
+        .app-shell {
             width: 100%;
-            max-width: 414px;
+            max-width: 412px;
             display: flex;
             flex-direction: column;
             position: relative;
         }
 
-        /* Сканер лазерный */
-        .laser-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--gold);
-            box-shadow: 0 0 20px var(--gold-solid);
-            z-index: 1000;
+        header {
+            padding: 50px 24px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .google-logo {
+            width: 24px;
+            height: 24px;
+        }
+
+        .brand-name {
+            font-size: 20px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* Material You Tabs */
+        .tabs {
+            display: flex;
+            padding: 8px 16px;
+            gap: 8px;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: transparent;
+            color: var(--md-on-surface);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            background: var(--md-primary);
+            color: #062e6f;
+        }
+
+        .content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
             display: none;
         }
 
-        @keyframes scanning {
-            0% { top: 0; }
-            50% { top: 100%; }
-            100% { top: 0; }
-        }
+        .content.active { display: block; }
 
-        header {
-            padding: 60px 20px 20px;
-            text-align: center;
-        }
-
-        .logo {
-            font-size: 32px;
-            font-weight: 900;
-            letter-spacing: 8px;
-            background: var(--gold);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
-        }
-
-        .tab-nav {
-            display: flex;
-            padding: 0 20px;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 14px;
-            border-radius: 16px;
-            background: #1c1c1e;
-            color: #666;
-            text-align: center;
-            font-weight: bold;
-            font-size: 13px;
-            cursor: pointer;
-            transition: 0.3s;
-            border: 1px solid transparent;
-        }
-
-        .tab-btn.active {
-            color: #fff;
-            background: #2c2c2e;
-            border: 1px solid rgba(212, 175, 55, 0.4);
-        }
-
-        .content-area {
-            flex: 1;
-            padding: 0 20px;
-            overflow-y: auto;
-        }
-
-        .view { display: none; animation: fadeIn 0.4s ease; }
-        .view.active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .balance-box {
-            background: linear-gradient(145deg, #1e1e1e, #121212);
+        /* Material Cards */
+        .card {
+            background: var(--md-card);
             border-radius: 28px;
-            padding: 40px 20px;
-            text-align: center;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255,255,255,0.03);
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .amount {
-            font-size: 48px;
-            font-weight: 800;
-            background: var(--gold);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 15px 0;
-        }
+        .balance-text { font-size: 48px; font-weight: 400; margin: 12px 0; color: var(--md-primary); }
+        
+        .plan-title { font-size: 22px; margin-bottom: 4px; font-weight: 500; }
+        .plan-price { font-size: 16px; color: var(--md-primary); margin-bottom: 16px; }
 
-        .premium-card {
-            background: var(--card);
-            border-radius: 22px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 4px solid var(--gold-solid);
-        }
-
-        .gold-button {
-            background: var(--gold);
-            color: #000;
+        .btn-filled {
+            background: var(--md-primary);
+            color: #062e6f;
             border: none;
-            padding: 16px;
+            padding: 14px;
             width: 100%;
-            border-radius: 16px;
-            font-weight: 900;
-            text-transform: uppercase;
+            border-radius: 100px;
+            font-weight: 600;
             font-size: 14px;
-            letter-spacing: 1px;
-            margin-top: 10px;
+            cursor: pointer;
         }
 
-        .flash-screen {
-            position: absolute;
-            inset: 0;
-            background: var(--gold-solid);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 1001;
-        }
-
-        @keyframes flashAnim {
-            0% { opacity: 0; }
-            50% { opacity: 0.5; }
-            100% { opacity: 0; }
+        .badge {
+            background: #3d4935;
+            color: #c4eed0;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 12px;
         }
 
         footer {
-            padding: 40px;
+            padding: 24px;
             text-align: center;
-            font-size: 10px;
-            color: #333;
-            letter-spacing: 4px;
-            text-transform: uppercase;
+            font-size: 12px;
+            color: #8e918f;
         }
     </style>
 </head>
 <body>
 
-<div class="app-container" id="app">
-    <div id="laser" class="laser-line"></div>
-    <div id="flash" class="flash-screen"></div>
-
+<div class="app-shell">
     <header>
-        <div class="logo">XCOEN</div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google "G" Logo.svg/512px-Google "G" Logo.svg.png" class="google-logo">
+        <div class="brand-name">XCOEN Telecom</div>
     </header>
 
-    <div class="tab-nav">
-        <div class="tab-btn active" onclick="showTab(this, 'overview')">OVERVIEW</div>
-        <div class="tab-btn" onclick="showTab(this, 'services')">SERVICES</div>
+    <div class="tabs">
+        <div class="tab active" onclick="setTab(this, 'main')">Главная</div>
+        <div class="tab" onclick="setTab(this, 'plans')">Тарифы</div>
+        <div class="tab" onclick="setTab(this, 'promo')">Акции</div>
     </div>
 
-    <div class="content-area">
-        <div id="overview" class="view active">
-            <div class="balance-box">
-                <div style="font-size: 11px; color: #555; letter-spacing: 2px;">AVAILABLE CAPITAL</div>
-                <div class="amount">150 000 ₸</div>
-                <div style="color: #4cd964; font-size: 11px;">ACTIVE • SECURE</div>
-            </div>
-            
-            <div class="premium-card">
-                <div style="font-weight: bold; font-size: 18px;">Base Elite</div>
-                <div style="color: #666; font-size: 14px; margin: 8px 0 15px;">Monthly Tier: 7.842 ₸</div>
-                <button class="gold-button" onclick="alert('Operation Confirmed')">Top Up</button>
-            </div>
+    <div id="main" class="content active">
+        <div class="card">
+            <div style="font-size: 12px; opacity: 0.7;">БАЛАНС G-ACCOUNT</div>
+            <div class="balance-text">150 000 ₸</div>
+            <button class="btn-filled">Пополнить через G-Pay</button>
+        </div>
+        <div style="padding-left: 8px; font-size: 14px; opacity: 0.8;">Everything is KAMF-tabl.</div>
+    </div>
+
+    <div id="plans" class="content">
+        <div class="card">
+            <div class="plan-title">Base Elite</div>
+            <div class="plan-price">7.842 ₸ / мес</div>
+            <button class="btn-filled">Выбрать</button>
         </div>
 
-        <div id="services" class="view">
-            <div class="premium-card" style="border-left-color: #fff;">
-                <div style="font-weight: bold; font-size: 18px;">Security Access</div>
-                <div style="color: #666; font-size: 14px; margin: 8px 0 15px;">Biometric Scan Required</div>
-                <button class="gold-button" onclick="startSecurityScan()">Start Scanner</button>
+        <div class="card" style="background: linear-gradient(180deg, #131314 0%, #1a2333 100%); border: 1px solid var(--md-primary);">
+            <div class="badge">УЛЬТИМАТИВНЫЙ 5GUA</div>
+            <div class="plan-title">XCOEN Quantum</div>
+            <div class="plan-price">31.839 ₸ / мес</div>
+            <div style="font-size: 13px; opacity: 0.7; margin-bottom: 20px;">
+                • Полный безлимит без ограничений скорости<br>
+                • Приоритетный канал Google Fiber<br>
+                • Шифрование данных G-Shield
             </div>
-
-            <div class="premium-card">
-                <div style="font-weight: bold; font-size: 18px;">Xcoen Concierge</div>
-                <div style="color: #666; font-size: 14px; margin: 8px 0 15px;">Elite Support 24/7</div>
-                <button class="gold-button" style="background: #fff; color: #000;">Contact Agent</button>
-            </div>
+            <button class="btn-filled">Активировать 5GUA</button>
         </div>
     </div>
 
-    <footer>LIFE IS KAMF-TABL</footer>
+    <div id="promo" class="content">
+        <div class="card">
+            <div class="badge">NEW</div>
+            <div class="plan-title">Family Link Plus</div>
+            <div style="font-size: 14px; opacity: 0.7;">Скидка 50% на второй номер для братишки.</div>
+        </div>
+    </div>
+
+    <footer>Powered by Google Infrastructure</footer>
 </div>
 
 <script>
-    function showTab(btn, tabId) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        
-        btn.classList.add('active');
-        document.getElementById(tabId).classList.add('active');
-    }
-
-    function startSecurityScan() {
-        const laser = document.getElementById('laser');
-        const flash = document.getElementById('flash');
-        
-        laser.style.display = 'block';
-        laser.style.animation = 'scanning 1.5s ease-in-out infinite';
-        
-        setTimeout(() => {
-            laser.style.display = 'none';
-            flash.style.animation = 'flashAnim 0.6s ease-out';
-            setTimeout(() => {
-                flash.style.animation = '';
-                alert('ACCESS GRANTED. WELCOME, BOSS.');
-            }, 600);
-        }, 3000);
+    function setTab(el, id) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById(id).classList.add('active');
     }
 </script>
 
