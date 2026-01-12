@@ -11,18 +11,22 @@
     
     <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_Logo.svg/1024px-Google_%22G%22_Logo.svg.png">
     
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-
     <style>
         :root {
-            --md-surface: #121212;
-            --gold: linear-gradient(135deg, #D4AF37, #F1D382, #B8860B);
+            --m3-surface: #1a1b1e;
+            --m3-surface-variant: #44474e;
+            --m3-primary: #d2e3ff;
+            --m3-on-primary-container: #d2e3ff;
+            --m3-primary-container: #334867;
+            --m3-outline: #8e9199;
+            --m3-on-surface: #e2e2e6;
+            --m3-on-surface-variant: #c4c6d0;
         }
 
         body { 
-            background: var(--md-surface); 
-            color: #fff; 
-            font-family: 'Roboto', sans-serif; 
+            background: var(--m3-surface); 
+            color: var(--m3-on-surface); 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0; 
             padding: 0; 
             display: flex; 
@@ -30,100 +34,133 @@
             overflow: hidden;
         }
 
-        /* Тот самый плавный выкат при старте */
+        /* Та самая заставка Google Fiber */
         #splash {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: #121212;
+            background: #1a1b1e;
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            animation: fadeOut 1s forwards 2s; /* Исчезнет через 2 сек */
+            animation: fadeOut 0.8s forwards 1.8s;
         }
 
         .splash-text {
-            font-size: 32px;
-            letter-spacing: -1px;
-            font-weight: 700;
+            font-size: 34px;
+            font-weight: 600;
             opacity: 0;
-            transform: translateY(20px);
-            animation: slideUp 1.2s ease-out forwards;
+            transform: scale(0.9);
+            animation: popIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
-        @keyframes slideUp {
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes popIn {
+            to { opacity: 1; transform: scale(1); }
         }
 
         @keyframes fadeOut {
             to { opacity: 0; visibility: hidden; }
         }
 
-        .app { width: 100%; max-width: 400px; min-height: 100vh; background: #121212; display: flex; flex-direction: column; }
+        .app { width: 100%; max-width: 400px; min-height: 100vh; display: flex; flex-direction: column; padding-top: env(safe-area-inset-top); }
         
-        .gold-text { background: var(--gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold; }
-        .gold-bg { background: var(--gold); color: #000; }
+        header { padding: 40px 24px 20px; text-align: left; }
+        .logo { font-size: 28px; font-weight: 500; color: var(--m3-on-surface); }
 
-        header { padding: 50px 20px 20px; text-align: center; border-bottom: 1px solid #222; }
-        .logo { font-size: 24px; letter-spacing: 5px; text-transform: uppercase; }
+        .balance-box { 
+            margin: 0 16px 24px; 
+            padding: 28px; 
+            background: var(--m3-primary-container); 
+            border-radius: 28px; 
+            color: var(--m3-on-primary-container);
+        }
+        .balance-label { font-size: 14px; font-weight: 500; opacity: 0.9; margin-bottom: 8px; letter-spacing: 0.5px; }
+        .balance-val { font-size: 44px; font-weight: 400; }
 
-        .balance-box { margin: 20px; padding: 30px; background: #1c1c1c; border-radius: 20px; text-align: center; border: 1px solid rgba(212,175,55,0.2); }
-        .balance-val { font-size: 40px; margin: 10px 0; }
+        .tabs { display: flex; padding: 0 16px; gap: 8px; margin-bottom: 24px; }
+        .tab { 
+            flex: 1; 
+            padding: 10px 16px; 
+            text-align: center; 
+            background: transparent; 
+            border-radius: 20px; 
+            border: 1px solid var(--m3-outline);
+            color: var(--m3-on-surface-variant);
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .tab.active { 
+            background: var(--m3-primary-container); 
+            border-color: transparent;
+            color: var(--m3-on-primary-container); 
+        }
 
-        .tabs { display: flex; padding: 0 20px; gap: 10px; }
-        .tab { flex: 1; padding: 12px; text-align: center; background: #222; border-radius: 10px; cursor: pointer; color: #888; font-size: 12px; letter-spacing: 1px; }
-        .tab.active { background: #333; color: #fff; border: 1px solid #444; }
+        .plans { padding: 0 16px; flex: 1; }
+        .plan { 
+            background: #2b2f33; 
+            border-radius: 24px; 
+            padding: 24px; 
+            margin-bottom: 12px; 
+        }
+        .plan-name { font-size: 20px; font-weight: 500; margin-bottom: 4px; color: var(--m3-on-surface); }
+        .plan-price { font-size: 15px; color: var(--m3-on-surface-variant); margin-bottom: 20px; }
 
-        .plans { padding: 20px; flex: 1; }
-        .plan { background: #1c1c1c; border-radius: 15px; padding: 20px; margin-bottom: 15px; border-left: 4px solid #D4AF37; }
-        .plan-name { font-size: 18px; margin-bottom: 5px; font-weight: 700; }
-        .plan-price { font-size: 14px; color: #888; margin-bottom: 15px; }
-
-        .btn { border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
+        .btn { 
+            background: var(--m3-primary); 
+            color: #003061;
+            border: none; 
+            padding: 14px; 
+            width: 100%; 
+            border-radius: 100px; 
+            font-weight: 600; 
+            font-size: 15px;
+            cursor: pointer; 
+        }
         
-        footer { padding: 20px; text-align: center; font-size: 10px; color: #444; letter-spacing: 3px; }
+        footer { padding: 32px; text-align: center; font-size: 12px; color: var(--m3-on-surface-variant); opacity: 0.6; }
     </style>
 </head>
 <body>
 
 <div id="splash">
     <div class="splash-text">
-        <span style="color: #4285F4">G</span><span style="color: #EA4335">o</span><span style="color: #FBBC05">o</span><span style="color: #4285F4">g</span><span style="color: #34A853">l</span><span style="color: #EA4335">e</span>
-        <span style="color: #fff; margin-left: 10px;">Fiber</span>
+        <span style="color: #a8c7fa">Google</span>
+        <span style="color: #fff; margin-left: 8px;">Fiber</span>
     </div>
 </div>
 
 <div class="app">
     <header>
-        <div class="logo gold-text">Fiber SuperApp</div>
+        <div class="logo">Fiber SuperApp</div>
     </header>
 
-    <div class="tabs">
-        <div class="tab active">NETWORK</div>
-        <div class="tab">SERVICES</div>
+    <div class="balance-box">
+        <div class="balance-label">Available Data Balance</div>
+        <div class="balance-val">150 000 ₸</div>
     </div>
 
-    <div class="balance-box">
-        <div style="font-size: 11px; color: #666; letter-spacing: 2px;">FIBER CREDIT</div>
-        <div class="balance-val gold-text">150 000 ₸</div>
+    <div class="tabs">
+        <div class="tab active">Overview</div>
+        <div class="tab">Services</div>
+        <div class="tab">Support</div>
     </div>
 
     <div class="plans">
         <div class="plan">
             <div class="plan-name">Fiber Pro 5G</div>
-            <div class="plan-price">7.842 ₸ / month</div>
-            <button class="btn gold-bg" onclick="alert('Fiber 5G Activated')">Upgrade</button>
+            <div class="plan-price">7,842 ₸ / month</div>
+            <button class="btn" onclick="alert('Switching to Fiber Pro...')">Manage Plan</button>
         </div>
 
-        <div class="plan" style="border-color: #fff;">
-            <div class="plan-name">Google One Luxury</div>
-            <div class="plan-price">31.839 ₸ / month</div>
-            <button class="btn gold-bg" onclick="alert('Welcome to Google Luxury')">Activate</button>
+        <div class="plan">
+            <div class="plan-name">Ultimate Ultra</div>
+            <div class="plan-price">31,839 ₸ / month</div>
+            <button class="btn" onclick="alert('Activating Ultra Speed...')">Upgrade Now</button>
         </div>
     </div>
 
     <footer>
-        STAY CONNECTED • KAMF-TABL • ERRRRR
+        All systems operational • ERRRRRR
     </footer>
 </div>
 
