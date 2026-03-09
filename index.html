@@ -3,136 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#000000">
     <title>UlaMedia Pro</title>
     <style>
-        body { background: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding-bottom: 70px; overflow-x: hidden; }
+        body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding-bottom: 60px; overflow-x: hidden; }
         
-        /* Плеер сверху (как в YT) */
-        .player-section { position: sticky; top: 0; width: 100%; background: #000; z-index: 1000; display: none; border-bottom: 1px solid #1a1a1a; }
-        .player-section.active { display: block; }
-        .video-container { width: 100%; aspect-ratio: 16/9; background: #111; }
+        /* Плеер, который может расширяться */
+        #playerSection { width: 100%; background: #000; position: sticky; top: 0; z-index: 1000; display: none; }
+        #playerSection.active { display: block; }
+        
+        .v-wrap { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; }
+        /* Тот самый принудительный фуллскрин */
+        .v-wrap.full { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99999; aspect-ratio: auto; }
+        
         iframe { width: 100%; height: 100%; border: none; }
         
-        .video-meta { padding: 15px; border-bottom: 1px solid #111; }
-        .video-title { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
-        .video-stats { display: flex; gap: 15px; font-size: 13px; color: #888; align-items: center; }
+        /* Наша кнопка поверх видео */
+        .fs-btn { position: absolute; bottom: 10px; right: 10px; background: rgba(255,255,255,0.2); color: #fff; border: 1px solid #666; padding: 6px 12px; border-radius: 6px; font-size: 11px; z-index: 100000; backdrop-filter: blur(5px); }
+
+        .info { padding: 15px; }
+        .search-area { padding: 15px; display: flex; gap: 10px; }
+        input { flex: 1; background: #111; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 25px; outline: none; }
+
+        .list { padding: 10px; display: grid; gap: 15px; }
+        .item { display: flex; gap: 12px; align-items: center; cursor: pointer; }
+        .item img { width: 130px; border-radius: 12px; }
         
-        /* Имитация кнопок подписки/лайков */
-        .actions { display: flex; gap: 10px; margin-top: 15px; overflow-x: auto; padding-bottom: 5px; }
-        .action-btn { background: #222; padding: 8px 15px; border-radius: 20px; font-size: 13px; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
-        .subscribe-btn { background: #fff; color: #000; font-weight: 600; padding: 8px 20px; border-radius: 20px; margin-left: auto; }
-
-        /* Поиск и выдача */
-        .search-container { padding: 15px; }
-        .search-box { display: flex; gap: 10px; background: #111; padding: 5px 15px; border-radius: 25px; border: 1px solid #222; }
-        input { flex: 1; background: transparent; border: none; color: #fff; padding: 8px; outline: none; font-size: 16px; }
-        .search-btn { background: transparent; border: none; font-size: 18px; cursor: pointer; }
-
-        .results { padding: 10px; display: grid; gap: 15px; }
-        .thumb-card { display: flex; gap: 12px; cursor: pointer; }
-        .thumb-img { width: 140px; aspect-ratio: 16/9; border-radius: 10px; object-fit: cover; background: #111; }
-        .thumb-info { flex: 1; }
-        .thumb-title { font-size: 14px; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .thumb-channel { font-size: 12px; color: #888; margin-top: 4px; }
-
-        /* Нижняя навигация */
-        nav { position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.95); border-top: 1px solid #111; display: flex; justify-content: space-around; padding: 10px 0; z-index: 2000; }
-        .nav-item { color: #888; text-decoration: none; font-size: 10px; text-align: center; cursor: pointer; }
-        .nav-item.active { color: #fff; }
-        .nav-icon { font-size: 22px; margin-bottom: 3px; display: block; }
+        nav { position: fixed; bottom: 0; width: 100%; background: #000; border-top: 1px solid #111; display: flex; justify-content: space-around; padding: 12px 0; }
     </style>
 </head>
 <body>
 
-<div class="player-section" id="playerSection">
-    <div class="video-container" id="videoContainer"></div>
-    <div class="video-meta">
-        <div class="video-title" id="currentTitle">Название видео</div>
-        <div class="video-stats">
-            <span>UlaMedia • 2026</span>
-            <div class="subscribe-btn">Подписаться</div>
-        </div>
-        <div class="actions">
-            <div class="action-btn">👍 1.2К</div>
-            <div class="action-btn">👎</div>
-            <div class="action-btn">➡️ Поделиться</div>
-            <div class="action-btn">📥 Скачать</div>
-        </div>
+<div id="playerSection">
+    <div class="v-wrap" id="vWrap">
+        <button class="fs-btn" onclick="goFull()">РАЗВЕРНУТЬ</button>
+        <div id="videoIn" style="width:100%; height:100%;"></div>
+    </div>
+    <div class="info">
+        <div id="vTitle" style="font-weight:bold; font-size:16px;"></div>
+        <div style="color:#555; font-size:12px; margin-top:5px;">UlaMedia Premium • com.ula.media</div>
     </div>
 </div>
 
-<div id="homePage" class="search-container">
-    <div class="search-box">
-        <input type="text" id="query" placeholder="Поиск в UlaMedia...">
-        <button class="search-btn" onclick="search()">🔍</button>
-    </div>
-    <div class="results" id="results">
-        <p style="text-align:center; color:#444; margin-top:50px;">Начни поиск, бро</p>
-    </div>
+<div class="search-area">
+    <input type="text" id="q" placeholder="Че ищем, бро?">
+    <button onclick="doSearch()" style="background:none; border:none; font-size:20px;">🔍</button>
 </div>
+
+<div id="list" class="list"></div>
 
 <nav>
-    <div class="nav-item active" onclick="location.reload()">
-        <span class="nav-icon">🏠</span>
-        <span>Главная</span>
-    </div>
-    <div class="nav-item">
-        <span class="nav-icon">➕</span>
-        <span>Shorts</span>
-    </div>
-    <div class="nav-item">
-        <span class="nav-icon">🔔</span>
-        <span>Уведомления</span>
-    </div>
-    <div class="nav-item">
-        <span class="nav-icon">👤</span>
-        <span>Вы</span>
-    </div>
+    <span onclick="location.reload()">🏠</span>
+    <span>📺</span>
+    <span>⚙️</span>
 </nav>
 
 <script>
-    const API_KEY = 'AIzaSyAg8VMF7CsW2jx7brAfXsl1y21pO6qV7-c'; // Вставь свой ключ!
+    const KEY = 'AIzaSyAg8VMF7CsW2jx7brAfXsl1y21pO6qV7-c'; 
 
-    async function search() {
-        const q = document.getElementById('query').value;
-        if(!q) return;
-        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=15&q=${q}&type=video&key=${API_KEY}`;
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
-            renderResults(data.items);
-        } catch (e) { alert('Ошибка API'); }
-    }
-
-    function renderResults(items) {
-        const results = document.getElementById('results');
-        results.innerHTML = items.map(item => `
-            <div class="thumb-card" onclick="openPlayer('${item.id.videoId}', '${item.snippet.title.replace(/'/g, "")}')">
-                <img class="thumb-img" src="${item.snippet.thumbnails.medium.url}">
-                <div class="thumb-info">
-                    <div class="thumb-title">${item.snippet.title}</div>
-                    <div class="thumb-channel">${item.snippet.channelTitle}</div>
-                </div>
+    async function doSearch() {
+        const val = document.getElementById('q').value;
+        const r = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${val}&type=video&key=${KEY}`);
+        const d = await r.json();
+        document.getElementById('list').innerHTML = d.items.map(i => `
+            <div class="item" onclick="play('${i.id.videoId}', '${i.snippet.title.replace(/'/g, "")}')">
+                <img src="${i.snippet.thumbnails.medium.url}">
+                <div style="font-size:13px; font-weight:500;">${i.snippet.title}</div>
             </div>
         `).join('');
     }
 
-    function openPlayer(id, title) {
-        const section = document.getElementById('playerSection');
-        const container = document.getElementById('videoContainer');
-        document.getElementById('currentTitle').innerText = title;
-        
-        section.classList.add('active');
-        container.innerHTML = `
-            <iframe 
-                src="https://www.youtube.com/embed/${id}?autoplay=1&modestbranding=1&rel=0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                allowfullscreen>
-            </iframe>
-        `;
+    function play(id, t) {
+        document.getElementById('playerSection').classList.add('active');
+        document.getElementById('vTitle').innerText = t;
+        document.getElementById('videoIn').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&modestbranding=1" allowfullscreen></iframe>`;
         window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function goFull() {
+        const w = document.getElementById('vWrap');
+        const b = event.target;
+        if(!w.classList.contains('full')) {
+            w.classList.add('full');
+            b.innerText = 'СВЕРНУТЬ';
+            // Пробуем еще системно развернуть (на всякий)
+            if (w.requestFullscreen) w.requestFullscreen();
+        } else {
+            w.classList.remove('full');
+            b.innerText = 'РАЗВЕРНУТЬ';
+            if (document.exitFullscreen) document.exitFullscreen();
+        }
     }
 </script>
 </body>
