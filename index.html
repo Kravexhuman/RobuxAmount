@@ -2,167 +2,214 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fiber SuperApp</title>
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Fiber">
-    
-    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_Logo.svg/1024px-Google_%22G%22_Logo.svg.png">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UlaMedia</title>
     <style>
-        :root {
-            --m3-surface: #1a1b1e;
-            --m3-surface-variant: #44474e;
-            --m3-primary: #d2e3ff;
-            --m3-on-primary-container: #d2e3ff;
-            --m3-primary-container: #334867;
-            --m3-outline: #8e9199;
-            --m3-on-surface: #e2e2e6;
-            --m3-on-surface-variant: #c4c6d0;
+        /* AMOLED Black база */
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
 
-        body { 
-            background: var(--m3-surface); 
-            color: var(--m3-on-surface); 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0; 
-            padding: 0; 
-            display: flex; 
-            justify-content: center;
+        /* Верхняя панель */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            background: #000000;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 200; /* Минималистичный тонкий шрифт */
+            letter-spacing: 1px;
+        }
+
+        .auth-btn {
+            background-color: #333333;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Поиск */
+        .search-container {
+            padding: 10px 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            outline: none;
+        }
+
+        .search-btn {
+            background: #333333;
+            border: none;
+            color: white;
+            padding: 0 15px;
+            border-radius: 12px;
+        }
+
+        /* Контент (Видосы) */
+        .feed {
+            padding: 20px;
+            padding-bottom: 100px; /* Чтобы нижний бар не перекрывал */
+            display: grid;
+            gap: 20px;
+        }
+
+        .video-card {
+            background: #000000;
+            border: 1px solid #1a1a1a;
+            border-radius: 15px;
             overflow: hidden;
         }
 
-        /* Та самая заставка Google Fiber */
-        #splash {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #1a1b1e;
+        .thumbnail {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #1a1a1a;
             display: flex;
-            justify-content: center;
             align-items: center;
-            z-index: 9999;
-            animation: fadeOut 0.8s forwards 1.8s;
+            justify-content: center;
+            color: #444;
         }
 
-        .splash-text {
-            font-size: 34px;
-            font-weight: 600;
-            opacity: 0;
-            transform: scale(0.9);
-            animation: popIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        .video-info {
+            padding: 12px;
         }
 
-        @keyframes popIn {
-            to { opacity: 1; transform: scale(1); }
+        .video-title {
+            font-size: 16px;
+            margin-bottom: 5px;
         }
 
-        @keyframes fadeOut {
-            to { opacity: 0; visibility: hidden; }
+        /* Нижний бар */
+        nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #000000;
+            border-top: 1px solid #1a1a1a;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            z-index: 100;
         }
 
-        .app { width: 100%; max-width: 400px; min-height: 100vh; display: flex; flex-direction: column; padding-top: env(safe-area-inset-top); }
-        
-        header { padding: 40px 24px 20px; text-align: left; }
-        .logo { font-size: 28px; font-weight: 500; color: var(--m3-on-surface); }
-
-        .balance-box { 
-            margin: 0 16px 24px; 
-            padding: 28px; 
-            background: var(--m3-primary-container); 
-            border-radius: 28px; 
-            color: var(--m3-on-primary-container);
-        }
-        .balance-label { font-size: 14px; font-weight: 500; opacity: 0.9; margin-bottom: 8px; letter-spacing: 0.5px; }
-        .balance-val { font-size: 44px; font-weight: 400; }
-
-        .tabs { display: flex; padding: 0 16px; gap: 8px; margin-bottom: 24px; }
-        .tab { 
-            flex: 1; 
-            padding: 10px 16px; 
-            text-align: center; 
-            background: transparent; 
-            border-radius: 20px; 
-            border: 1px solid var(--m3-outline);
-            color: var(--m3-on-surface-variant);
-            font-size: 14px;
-            font-weight: 500;
-        }
-        .tab.active { 
-            background: var(--m3-primary-container); 
-            border-color: transparent;
-            color: var(--m3-on-primary-container); 
+        .nav-item {
+            color: #888888;
+            text-decoration: none;
+            font-size: 12px;
+            text-align: center;
         }
 
-        .plans { padding: 0 16px; flex: 1; }
-        .plan { 
-            background: #2b2f33; 
-            border-radius: 24px; 
-            padding: 24px; 
-            margin-bottom: 12px; 
+        .nav-item.active {
+            color: #ffffff;
         }
-        .plan-name { font-size: 20px; font-weight: 500; margin-bottom: 4px; color: var(--m3-on-surface); }
-        .plan-price { font-size: 15px; color: var(--m3-on-surface-variant); margin-bottom: 20px; }
 
-        .btn { 
-            background: var(--m3-primary); 
-            color: #003061;
-            border: none; 
-            padding: 14px; 
-            width: 100%; 
-            border-radius: 100px; 
-            font-weight: 600; 
-            font-size: 15px;
-            cursor: pointer; 
+        /* Страница входа (модалка) */
+        #login-page {
+            display: none; /* Скрыто по дефолту */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
         }
-        
-        footer { padding: 32px; text-align: center; font-size: 12px; color: var(--m3-on-surface-variant); opacity: 0.6; }
+
+        .login-box {
+            width: 300px;
+            text-align: center;
+        }
+
+        .login-box input {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: white;
+        }
     </style>
 </head>
 <body>
 
-<div id="splash">
-    <div class="splash-text">
-        <span style="color: #a8c7fa">Google</span>
-        <span style="color: #fff; margin-left: 8px;">Fiber</span>
-    </div>
-</div>
-
-<div class="app">
     <header>
-        <div class="logo">Fiber SuperApp</div>
+        <div class="logo">UlaMedia</div>
+        <button class="auth-btn" onclick="toggleLogin()">Войти</button>
     </header>
 
-    <div class="balance-box">
-        <div class="balance-label">Available Data Balance</div>
-        <div class="balance-val">150 000 ₸</div>
+    <div class="search-container">
+        <input type="text" placeholder="Поиск видео...">
+        <button class="search-btn">Найти</button>
     </div>
 
-    <div class="tabs">
-        <div class="tab active">Overview</div>
-        <div class="tab">Services</div>
-        <div class="tab">Support</div>
-    </div>
-
-    <div class="plans">
-        <div class="plan">
-            <div class="plan-name">Fiber Pro 5G</div>
-            <div class="plan-price">7,842 ₸ / month</div>
-            <button class="btn" onclick="alert('Switching to Fiber Pro...')">Manage Plan</button>
+    <main class="feed">
+        <div class="video-card">
+            <div class="thumbnail">Превью видео</div>
+            <div class="video-info">
+                <div class="video-title">Как кастомизировать всё на свете</div>
+            </div>
         </div>
+        <div class="video-card">
+            <div class="thumbnail">Превью видео</div>
+            <div class="video-info">
+                <div class="video-title">Почему Prado 120 — это легенда</div>
+            </div>
+        </div>
+    </main>
 
-        <div class="plan">
-            <div class="plan-name">Ultimate Ultra</div>
-            <div class="plan-price">31,839 ₸ / month</div>
-            <button class="btn" onclick="alert('Activating Ultra Speed...')">Upgrade Now</button>
+    <nav>
+        <a href="#" class="nav-item active">Главная</a>
+        <a href="#" class="nav-item">Библиотека</a>
+        <a href="#" class="nav-item">Настройки</a>
+    </nav>
+
+    <div id="login-page">
+        <div class="login-box">
+            <h2 style="font-weight: 200;">Вход в UlaMedia</h2>
+            <input type="text" placeholder="Логин">
+            <input type="password" placeholder="Пароль">
+            <button class="auth-btn" style="width: 100%;" onclick="toggleLogin()">Зайти</button>
+            <p style="color: #555; margin-top: 20px; font-size: 12px;" onclick="toggleLogin()">назад</p>
         </div>
     </div>
 
-    <footer>
-        All systems operational • ERRRRRR
-    </footer>
-</div>
+    <script>
+        function toggleLogin() {
+            const login = document.getElementById('login-page');
+            if (login.style.display === 'flex') {
+                login.style.display = 'none';
+            } else {
+                login.style.display = 'flex';
+            }
+        }
+    </script>
 
 </body>
 </html>
