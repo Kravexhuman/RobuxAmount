@@ -2,97 +2,146 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UlaMedia Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samsung Galaxy A57</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding-bottom: 60px; overflow-x: hidden; }
-        
-        /* Плеер, который может расширяться */
-        #playerSection { width: 100%; background: #000; position: sticky; top: 0; z-index: 1000; display: none; }
-        #playerSection.active { display: block; }
-        
-        .v-wrap { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; }
-        /* Тот самый принудительный фуллскрин */
-        .v-wrap.full { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99999; aspect-ratio: auto; }
-        
-        iframe { width: 100%; height: 100%; border: none; }
-        
-        /* Наша кнопка поверх видео */
-        .fs-btn { position: absolute; bottom: 10px; right: 10px; background: rgba(255,255,255,0.2); color: #fff; border: 1px solid #666; padding: 6px 12px; border-radius: 6px; font-size: 11px; z-index: 100000; backdrop-filter: blur(5px); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
 
-        .info { padding: 15px; }
-        .search-area { padding: 15px; display: flex; gap: 10px; }
-        input { flex: 1; background: #111; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 25px; outline: none; }
+        body {
+            background-color: #fff;
+            color: #000;
+        }
 
-        .list { padding: 10px; display: grid; gap: 15px; }
-        .item { display: flex; gap: 12px; align-items: center; cursor: pointer; }
-        .item img { width: 130px; border-radius: 12px; }
-        
-        nav { position: fixed; bottom: 0; width: 100%; background: #000; border-top: 1px solid #111; display: flex; justify-content: space-around; padding: 12px 0; }
+        /* верхний бар */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 1000;
+        }
+
+        /* фейк меню из 3 полосок */
+        .burger-menu {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 20px;
+            height: 14px;
+            cursor: pointer;
+            margin-right: 20px;
+        }
+
+        .burger-line {
+            width: 100%;
+            height: 20px; /* стоп, 2px конечно, чтоб тонкие были */
+            height: 2px;
+            background-color: #555;
+            border-radius: 1px;
+        }
+
+        /* лого */
+        .logo {
+            font-style: italic;
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: 0.5px;
+            color: #000;
+        }
+
+        /* серая тонкая перегородка */
+        .divider {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: #e5e5e5;
+            z-index: 1000;
+        }
+
+        /* контент листаемого сайта */
+        .main-content {
+            margin-top: 61px;
+            padding: 80px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* заголовок (типо samsung sans bold) */
+        .main-title {
+            font-weight: 700;
+            font-size: 42px;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            color: #000;
+            max-width: 800px;
+        }
+
+        /* описание (типо samsung sans medium) */
+        .description {
+            font-weight: 500;
+            font-size: 18px;
+            line-height: 1.6;
+            color: #363636;
+            max-width: 650px;
+            margin-bottom: 40px;
+        }
+
+        /* синий овал-кнопка */
+        .order-btn {
+            display: inline-block;
+            background-color: #0376ff;
+            color: #fff;
+            font-weight: 500;
+            font-size: 16px;
+            padding: 14px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .order-btn:hover {
+            background-color: #025cc7;
+        }
     </style>
 </head>
 <body>
 
-<div id="playerSection">
-    <div class="v-wrap" id="vWrap">
-        <button class="fs-btn" onclick="goFull()">РАЗВЕРНУТЬ</button>
-        <div id="videoIn" style="width:100%; height:100%;"></div>
-    </div>
-    <div class="info">
-        <div id="vTitle" style="font-weight:bold; font-size:16px;"></div>
-        <div style="color:#555; font-size:12px; margin-top:5px;">UlaMedia Premium • com.ula.media</div>
-    </div>
-</div>
+    <header class="top-bar">
+        <div class="burger-menu">
+            <div class="burger-line"></div>
+            <div class="burger-line"></div>
+            <div class="burger-line"></div>
+        </div>
+        <div class="logo">RNN</div>
+    </header>
 
-<div class="search-area">
-    <input type="text" id="q" placeholder="Че ищем, бро?">
-    <button onclick="doSearch()" style="background:none; border:none; font-size:20px;">🔍</button>
-</div>
+    <div class="divider"></div>
 
-<div id="list" class="list"></div>
+    <main class="main-content">
+        <h1 class="main-title">Встречайте лето с Samsung Galaxy A57</h1>
+        <p class="description">
+            Встречайте новый Samsung Galaxy A57 — ваш идеальный спутник на это лето. Смартфон оснащен невероятным Super AMOLED экраном с частотой 120 Гц, обеспечивающим максимальную плавность. Мощная камера на 64 Мп с искусственным интеллектом сделает каждый летний кадр шедевром даже ночью. Емкий аккумулятор на 5000 мАч гарантирует работу без подзарядки до двух дней, а обновленный чип легко справится с любыми задачами и играми.
+        </p>
+        <a href="#" class="order-btn">Заказать в Давидовской Федерации</a>
+    </main>
 
-<nav>
-    <span onclick="location.reload()">🏠</span>
-    <span>📺</span>
-    <span>⚙️</span>
-</nav>
-
-<script>
-    const KEY = 'AIzaSyAg8VMF7CsW2jx7brAfXsl1y21pO6qV7-c'; 
-
-    async function doSearch() {
-        const val = document.getElementById('q').value;
-        const r = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${val}&type=video&key=${KEY}`);
-        const d = await r.json();
-        document.getElementById('list').innerHTML = d.items.map(i => `
-            <div class="item" onclick="play('${i.id.videoId}', '${i.snippet.title.replace(/'/g, "")}')">
-                <img src="${i.snippet.thumbnails.medium.url}">
-                <div style="font-size:13px; font-weight:500;">${i.snippet.title}</div>
-            </div>
-        `).join('');
-    }
-
-    function play(id, t) {
-        document.getElementById('playerSection').classList.add('active');
-        document.getElementById('vTitle').innerText = t;
-        document.getElementById('videoIn').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&modestbranding=1" allowfullscreen></iframe>`;
-        window.scrollTo({top: 0, behavior: 'smooth'});
-    }
-
-    function goFull() {
-        const w = document.getElementById('vWrap');
-        const b = event.target;
-        if(!w.classList.contains('full')) {
-            w.classList.add('full');
-            b.innerText = 'СВЕРНУТЬ';
-            // Пробуем еще системно развернуть (на всякий)
-            if (w.requestFullscreen) w.requestFullscreen();
-        } else {
-            w.classList.remove('full');
-            b.innerText = 'РАЗВЕРНУТЬ';
-            if (document.exitFullscreen) document.exitFullscreen();
-        }
-    }
-</script>
 </body>
 </html>
+ 
